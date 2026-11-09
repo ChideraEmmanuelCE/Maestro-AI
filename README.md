@@ -9,6 +9,7 @@ Maestro AI is being rebuilt as an age-adaptive music education studio: structure
 - Sample-based piano playback using the Salamander soundfont, with a local synthesizer fallback.
 - Generated four-bar C-major arrangement with melody, harmony, bass and percussion tracks.
 - Tempo control, track muting, arrangement playback and MIDI export.
+- Supabase email magic-link sign-in, session refresh middleware and auth callback (requires project environment variables).
 - Supabase SQL schema for guardian accounts, multiple learner profiles, lesson mastery, practice sessions, generated pieces and weekly goals.
 - Row-level security policies scope learner records to their guardian.
 
@@ -52,7 +53,7 @@ Never expose service-role keys or model-provider secrets in browser code.
 
 ## Important release status
 
-This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project, and the current profile screen still uses device-local storage until the authentication and profile-sync migration is completed. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
+This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. The email magic-link flow and lesson-mastery sync are wired, but cloud sign-in and cloud progress cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Multiple learner profile switching and full practice-session sync remain unfinished. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
 
 ## Audio notes
 
