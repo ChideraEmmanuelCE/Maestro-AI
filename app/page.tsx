@@ -26,7 +26,7 @@ const lessons = [
 ];
 
 function readProgress():Progress { try { const p=JSON.parse(localStorage.getItem(PROGRESS)||"{}"); return {completed:Array.isArray(p.completed)?p.completed:[],minutes:Number(p.minutes)||0,notesPlayed:Number(p.notesPlayed)||0,lastActive:p.lastActive||null}; } catch { return {completed:[],minutes:0,notesPlayed:0,lastActive:null}; } }
-function playTone(freq:number) { try { const Ctx=window.AudioContext || (window as any).webkitAudioContext; const ctx=new Ctx(); const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.type="sine"; osc.frequency.value=freq; gain.gain.setValueAtTime(.0001,ctx.currentTime); gain.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02); gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.9); osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+.92); osc.onended=()=>ctx.close(); } catch {} }
+function playTone(freq:number) { try { const Ctx=window.AudioContext || (window as any).webkitAudioContext; const ctx=new Ctx(); const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.type="sine"; osc.frequency.value=freq; gain.gain.setValueAtTime(.0001,ctx.currentTime); gain.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02); gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.9); osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+.92); osc.onended=()=>ctx.close(); } catch {} }\nfunction playClick(){try{const Ctx=window.AudioContext||(window as any).webkitAudioContext;const ctx=new Ctx();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.type="sine";osc.frequency.value=880;gain.gain.setValueAtTime(.12,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.07);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.08);osc.onended=()=>ctx.close();}catch{}}
 
 export default function Page(){
   const [account,setAccount]=useState<Learner|null>(null);
@@ -88,4 +88,4 @@ export default function Page(){
   </main>;
 }
 
-function Metronome(){const [beat,setBeat]=useState(0);useEffect(()=>{const id=setInterval(()=>setBeat(v=>(v+1)%4),600);return()=>clearInterval(id);},[]);return <div className="metronome-beats">{[0,1,2,3].map(i=><span key={i} className={beat===i?"beat-active":""}/>)}</div>}
+function Metronome(){const [beat,setBeat]=useState(0);useEffect(()=>{const id=setInterval(()=>{setBeat(v=>(v+1)%4);playClick();},600);return()=>clearInterval(id);},[]);return <div className="metronome-beats">{[0,1,2,3].map(i=><span key={i} className={beat===i?"beat-active":""}/>)}</div>}
