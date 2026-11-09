@@ -170,3 +170,43 @@
 .theme-dark .fretboard-help{color:#a5aaba}
 .guitar-fretboard{overflow-x:auto}
 @media(max-width:700px){.guitar-panel{padding:17px}}
+
+
+/* Multi-question lesson mastery assessment */
+.assessment-question {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  margin-top: 14px;
+  border: 1px solid var(--border, rgba(255,255,255,.12));
+  border-radius: 16px;
+  background: var(--surface-soft, rgba(255,255,255,.035));
+  text-align: left;
+}
+.assessment-question > b {
+  display: block;
+  color: var(--text, inherit);
+  font-size: .96rem;
+  line-height: 1.55;
+}
+.assessment-question > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,190px),1fr));
+  gap: 9px;
+}
+.assessment-question > div > button {
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid var(--border, rgba(255,255,255,.14));
+  border-radius: 11px;
+  text-align: left;
+  line-height: 1.4;
+}
+.assessment-question > div > button:focus-visible {
+  outline: 2px solid var(--accent, #b9d8a5);
+  outline-offset: 3px;
+}
+@media (max-width: 640px) {
+  .assessment-question { padding: 13px; }
+  .assessment-question > div { grid-template-columns: 1fr; }
+}
