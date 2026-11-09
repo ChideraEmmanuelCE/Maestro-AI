@@ -210,3 +210,21 @@
   .assessment-question { padding: 13px; }
   .assessment-question > div { grid-template-columns: 1fr; }
 }
+
+.achievement-section{margin:22px 0}
+.achievement-count{font-size:10px;color:#8b8e98}
+.achievement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+.achievement-card{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;opacity:.62}
+.achievement-card.earned{opacity:1;border-color:#d9d3ff;background:#f7f6ff}
+.achievement-card>span{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6559df}
+.achievement-card>div{display:grid;gap:4px;min-width:0;flex:1}
+.achievement-card b{font:700 11px Manrope;color:var(--ink)}
+.achievement-card small{font-size:9px;line-height:1.4;color:#858994}
+.achievement-card strong{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:#8a8d98}
+.achievement-card.earned strong{color:#4a8d6c}
+.theme-dark .achievement-card{background:#1a1f2c;border-color:#303647}
+.theme-dark .achievement-card.earned{background:#25243c;border-color:#4a4675}
+.theme-dark .achievement-card b{color:#edf0f7}
+.theme-dark .achievement-card small,.theme-dark .achievement-count{color:#a5aaba}
+@media(max-width:760px){.achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.achievement-grid{grid-template-columns:1fr}}
