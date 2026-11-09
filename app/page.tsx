@@ -61,7 +61,7 @@ export default function Page(){
   function note(freq:number){playTone(freq);setProgress(p=>({...p,notesPlayed:p.notesPlayed+1,lastActive:new Date().toISOString()}));}
   async function sendChat(e?:React.FormEvent){e?.preventDefault();const prompt=question.trim();if(!prompt||typing)return;const next=[...chat,{role:"user" as const,content:prompt}];setChat(next);setQuestion("");setTyping(true);setChatError("");try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:next.slice(-16),learnerAgeBand:account.ageBand})});const data=await r.json();if(!r.ok)throw new Error(data.error||"Maestro could not answer. Please try again.");if(typeof data.reply!=="string")throw new Error("Maestro returned an invalid response.");setChat(c=>[...c,{role:"assistant",content:data.reply}]);}catch(err){setChatError(err instanceof Error?err.message:"Connection problem. Please try again.");}finally{setTyping(false);}}
   function signOut(){setAccount(null);setScreen("home");setActiveLesson(null);setShowParent(false);}
-  function navTo(s:string){setScreen(s);setMobileMenu(false);setActiveLesson(null);}
+  function navTo(s:string){setScreen(s);setMobileMenu(false);if(s!=="learn")setActiveLesson(null);}
   const nav=[["home","Home",Home],["learn","Learn",BookOpen],["practice","Practice",Music2],["maestro","Maestro AI",MessageCircle],["progress","My progress",ChartNoAxesColumn],["profile","Profile",UserRound]] as const;
   const done=progress.completed.length;
   const currentDate=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
