@@ -1,0 +1,153 @@
+"use client";
+
+import * as Tone from "tone";
+import { Midi } from "@tonejs/midi";
+
+export type TrackName = "melody" | "harmony" | "bass" | "drums";
+export type NoteEvent = { track: TrackName; midi: number; beat: number; beats: number; velocity?: number };
+export type Arrangement = { title: string; bpm: number; beatsPerBar: number; bars: number; events: NoteEvent[] };
+
+let piano: Tone.Sampler | null = null;
+let fallback: Tone.PolySynth | null = null;
+let clickSynth: Tone.MembraneSynth | null = null;
+let ready: Promise<void> | null = null;
+let muted = new Set<TrackName>();
+let scheduledIds: number[] = [];
+
+const pianoSamples: Record<string, string> = {
+  A1:"A1.mp3", C2:"C2.mp3", "D#2":"Ds2.mp3", "F#2":"Fs2.mp3",
+  A2:"A2.mp3", C3:"C3.mp3", "D#3":"Ds3.mp3", "F#3":"Fs3.mp3",
+  A3:"A3.mp3", C4:"C4.mp3", "D#4":"Ds4.mp3", "F#4":"Fs4.mp3",
+  A4:"A4.mp3", C5:"C5.mp3", "D#5":"Ds5.mp3", "F#5":"Fs5.mp3",
+  A5:"A5.mp3", C6:"C6.mp3", "D#6":"Ds6.mp3", "F#6":"Fs6.mp3",
+  A6:"A6.mp3", C7:"C7.mp3"
+};
+
+export async function initialiseAudio() {
+  if (!ready) {
+    ready = (async () => {
+      await Tone.start();
+      piano = new Tone.Sampler({
+        urls: pianoSamples,
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
+        release: 1.1
+      }).toDestination();
+      fallback = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "triangle" },
+        envelope: { attack: 0.012, decay: 0.18, sustain: 0.35, release: 0.8 }
+      }).toDestination();
+      clickSynth = new Tone.MembraneSynth({
+        pitchDecay: 0.008,
+        octaves: 5,
+        envelope: { attack: 0.001, decay: 0.07, sustain: 0, release: 0.04 }
+      }).toDestination();
+      try { await Tone.loaded(); } catch { /* use the local synth fallback if samples cannot load */ }
+    })();
+  }
+  await ready;
+}
+
+export async function playMidiNote(midi: number, duration: Tone.Unit.Time = "8n", velocity = 0.78) {
+  await initialiseAudio();
+  const note = Tone.Frequency(midi, "midi").toNote();
+  if (piano?.loaded) piano.triggerAttackRelease(note, duration, Tone.now(), velocity);
+  else fallback?.triggerAttackRelease(note, duration, Tone.now(), velocity);
+}
+
+export async function playFrequency(frequency: number, duration: Tone.Unit.Time = "8n", velocity = 0.78) {
+  const midi = Math.round(69 + 12 * Math.log2(frequency / 440));
+  return playMidiNote(midi, duration, velocity);
+}
+
+export async function playMidiChord(notes: number[], duration: Tone.Unit.Time = "2n", velocity = 0.7) {
+  await initialiseAudio();
+  const names = notes.map(n => Tone.Frequency(n, "midi").toNote());
+  if (piano?.loaded) piano.triggerAttackRelease(names, duration, Tone.now(), velocity);
+  else fallback?.triggerAttackRelease(names, duration, Tone.now(), velocity);
+}
+
+export async function playFrequencyChord(frequencies: number[]) {
+  const notes = frequencies.map(f => Math.round(69 + 12 * Math.log2(f / 440)));
+  return playMidiChord(notes);
+}
+
+export async function playClick(accent = false) {
+  await initialiseAudio();
+  clickSynth?.triggerAttackRelease(accent ? "C3" : "G2", "32n", Tone.now(), accent ? 0.8 : 0.48);
+}
+
+export function stopArrangement() {
+  Tone.Transport.stop();
+  Tone.Transport.cancel();
+  scheduledIds = [];
+}
+
+export function setMutedTracks(tracks: TrackName[]) {
+  muted = new Set(tracks);
+}
+
+export async function playArrangement(arrangement: Arrangement) {
+  await initialiseAudio();
+  stopArrangement();
+  Tone.Transport.bpm.value = arrangement.bpm;
+  const secondsPerBeat = 60 / arrangement.bpm;
+  for (const event of arrangement.events) {
+    const id = Tone.Transport.schedule(time => {
+      if (muted.has(event.track)) return;
+      if (event.track === "drums") {
+        clickSynth?.triggerAttackRelease(event.midi >= 48 ? "C3" : "G2", "16n", time, event.velocity ?? 0.55);
+      } else {
+        const note = Tone.Frequency(event.midi, "midi").toNote();
+        const duration = Math.max(0.08, event.beats * secondsPerBeat * 0.88);
+        if (piano?.loaded) piano.triggerAttackRelease(note, duration, time, event.velocity ?? 0.72);
+        else fallback?.triggerAttackRelease(note, duration, time, event.velocity ?? 0.72);
+      }
+    }, event.beat * secondsPerBeat);
+    scheduledIds.push(id);
+  }
+  Tone.Transport.start("+0.05");
+  Tone.Transport.scheduleOnce(() => stopArrangement(), arrangement.bars * arrangement.beatsPerBar * secondsPerBeat + 0.2);
+}
+
+export function makeCmajorStudy(bpm = 84): Arrangement {
+  const melody = [60,62,64,65,67,69,71,72,71,69,67,65,64,62,60];
+  const events: NoteEvent[] = melody.map((midi, i) => ({
+    track: "melody", midi, beat: i * 0.5, beats: 0.46, velocity: i === 0 || i === 7 || i === 14 ? 0.9 : 0.68
+  }));
+  const chords = [[48,52,55],[53,57,60],[55,59,62],[48,52,55]];
+  chords.forEach((chord, bar) => chord.forEach(midi => events.push({
+    track: "harmony", midi, beat: bar * 4, beats: 3.8, velocity: 0.38
+  })));
+  [36,36,41,41,43,43,36,36].forEach((midi, i) => events.push({
+    track: "bass", midi, beat: i * 2, beats: 1.7, velocity: 0.58
+  }));
+  for (let beat = 0; beat < 16; beat++) events.push({
+    track: "drums", midi: beat % 4 === 0 ? 60 : 55, beat, beats: 0.12, velocity: beat % 4 === 0 ? 0.8 : 0.38
+  });
+  return { title: "C major: melody, harmony & pulse", bpm, beatsPerBar: 4, bars: 4, events };
+}
+
+export function exportArrangementMidi(arrangement: Arrangement) {
+  const midi = new Midi();
+  midi.header.setTempo(arrangement.bpm);
+  const names: TrackName[] = ["melody", "harmony", "bass", "drums"];
+  for (const name of names) {
+    const track = midi.addTrack();
+    track.name = name[0].toUpperCase() + name.slice(1);
+    for (const event of arrangement.events.filter(e => e.track === name)) {
+      track.addNote({
+        midi: event.midi,
+        time: event.beat * 60 / arrangement.bpm,
+        duration: event.beats * 60 / arrangement.bpm,
+        velocity: event.velocity ?? 0.7
+      });
+    }
+  }
+  const blob = new Blob([midi.toArray()], { type: "audio/midi" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "maestro-composition.mid";
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
