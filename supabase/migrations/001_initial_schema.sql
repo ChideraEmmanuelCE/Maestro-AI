@@ -81,6 +81,14 @@ alter table public.practice_sessions enable row level security;
 alter table public.generated_pieces enable row level security;
 alter table public.weekly_goals enable row level security;
 
+-- Make the migration safe to re-run in a staging project.
+drop policy if exists "guardians manage own account" on public.guardian_accounts;
+drop policy if exists "guardians manage own learners" on public.learner_profiles;
+drop policy if exists "guardians manage learner progress" on public.lesson_progress;
+drop policy if exists "guardians manage learner practice" on public.practice_sessions;
+drop policy if exists "guardians manage learner pieces" on public.generated_pieces;
+drop policy if exists "guardians manage learner goals" on public.weekly_goals;
+
 create policy "guardians manage own account" on public.guardian_accounts
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
@@ -102,3 +110,24 @@ create policy "guardians manage learner pieces" on public.generated_pieces
 create policy "guardians manage learner goals" on public.weekly_goals
   for all using (exists (select 1 from public.learner_profiles p where p.id = learner_id and p.guardian_user_id = auth.uid()))
   with check (exists (select 1 from public.learner_profiles p where p.id = learner_id and p.guardian_user_id = auth.uid()));
+
+
+-- Private audio bucket. Store objects under <auth-user-id>/<learner-id>/<filename>.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('maestro-audio', 'maestro-audio', false, 52428800, array['audio/mpeg','audio/wav','audio/mp4','audio/midi','audio/x-midi'])
+on conflict (id) do nothing;
+
+drop policy if exists "guardians read own audio" on storage.objects;
+drop policy if exists "guardians upload own audio" on storage.objects;
+drop policy if exists "guardians update own audio" on storage.objects;
+drop policy if exists "guardians delete own audio" on storage.objects;
+
+create policy "guardians read own audio" on storage.objects
+  for select using (bucket_id = 'maestro-audio' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "guardians upload own audio" on storage.objects
+  for insert with check (bucket_id = 'maestro-audio' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "guardians update own audio" on storage.objects
+  for update using (bucket_id = 'maestro-audio' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'maestro-audio' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "guardians delete own audio" on storage.objects
+  for delete using (bucket_id = 'maestro-audio' and (storage.foldername(name))[1] = auth.uid()::text);
