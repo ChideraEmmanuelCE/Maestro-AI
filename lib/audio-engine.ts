@@ -10,6 +10,8 @@ export type Arrangement = { title: string; bpm: number; beatsPerBar: number; bar
 let piano: Tone.Sampler | null = null;
 let fallback: Tone.PolySynth | null = null;
 let clickSynth: Tone.MembraneSynth | null = null;
+let snareSynth: Tone.NoiseSynth | null = null;
+let hatSynth: Tone.MetalSynth | null = null;
 let ready: Promise<void> | null = null;
 let muted = new Set<TrackName>();
 let scheduledIds: number[] = [];
@@ -36,11 +38,9 @@ export async function initialiseAudio() {
         oscillator: { type: "triangle" },
         envelope: { attack: 0.012, decay: 0.18, sustain: 0.35, release: 0.8 }
       }).toDestination();
-      clickSynth = new Tone.MembraneSynth({
-        pitchDecay: 0.008,
-        octaves: 5,
-        envelope: { attack: 0.001, decay: 0.07, sustain: 0, release: 0.04 }
-      }).toDestination();
+      clickSynth = new Tone.MembraneSynth({pitchDecay:0.008,octaves:5,envelope:{attack:0.001,decay:0.07,sustain:0,release:0.04}}).toDestination();
+      snareSynth = new Tone.NoiseSynth({noise:{type:"white"},envelope:{attack:0.001,decay:0.13,sustain:0,release:0.02}}).toDestination();
+      hatSynth = new Tone.MetalSynth({frequency:280,envelope:{attack:0.001,decay:0.06,release:0.01},harmonicity:5.1,modulationIndex:24,resonance:3200,octaves:1.5}).toDestination();
       try { await Tone.loaded(); } catch { /* use the local synth fallback if samples cannot load */ }
     })();
   }
@@ -69,6 +69,14 @@ export async function playMidiChord(notes: number[], duration: Tone.Unit.Time = 
 export async function playFrequencyChord(frequencies: number[]) {
   const notes = frequencies.map(f => Math.round(69 + 12 * Math.log2(f / 440)));
   return playMidiChord(notes);
+}
+
+export async function playDrumPad(pad:"kick"|"snare"|"hat"|"tom"|"clap") {
+  await initialiseAudio();
+  if(pad==="kick")clickSynth?.triggerAttackRelease("C1","8n",Tone.now(),0.95);
+  else if(pad==="tom")clickSynth?.triggerAttackRelease("G1","8n",Tone.now(),0.78);
+  else if(pad==="hat")hatSynth?.triggerAttackRelease("32n",Tone.now(),0.35);
+  else snareSynth?.triggerAttackRelease(pad==="clap"?"8n":"16n",Tone.now(),pad==="clap"?0.7:0.62);
 }
 
 export async function playClick(accent = false) {
