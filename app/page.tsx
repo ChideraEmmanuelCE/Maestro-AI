@@ -24,7 +24,7 @@ const CHAT = "maestro.chat.v1";
 
 const lessons = curriculum.map(item => ({
   id:item.id, title:item.title, category:item.category, level:item.level,
-  duration:item.minutes+" min", description:item.objective, ageBands:item.ageBands, audio:item.audio, exercise:item.exercise,
+  duration:item.minutes+" min", minutes:item.minutes, description:item.objective, ageBands:item.ageBands, audio:item.audio, exercise:item.exercise,
   steps:[
     "LEARNING OBJECTIVE\n"+item.objective,
     "UNDERSTAND THE IDEA\n"+item.concept,
