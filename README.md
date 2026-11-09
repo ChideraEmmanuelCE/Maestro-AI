@@ -5,7 +5,7 @@ Maestro AI is being rebuilt as an age-adaptive music education studio: structure
 ## Current implementation
 
 - 20 structured lessons spanning listening, piano, notation, rhythm, scales, ear training, chords, harmony, guitar and composition.
-- Lesson objectives, concept explanations, listening prompts, practical activities and three-question mastery checks. Learners must score at least 75% before a lesson is marked mastered; best score and attempt count are persisted to Supabase when cloud auth is configured.
+- Lesson objectives, concept explanations, listening prompts, practical activities and four-question mastery checks. Learners must score at least 75% before a lesson is marked mastered; best score and attempt count are persisted to Supabase when cloud auth is configured.
 - Sample-based piano playback using the Salamander soundfont, with a local synthesizer fallback.
 - Generated four-bar C-major arrangement with melody, harmony, bass and percussion tracks.
 - Tempo control, track muting, arrangement playback and MIDI export.
