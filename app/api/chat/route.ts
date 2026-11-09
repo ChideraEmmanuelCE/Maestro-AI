@@ -14,10 +14,12 @@ Never invent facts about songs, artists, chords, or theory. If uncertain, say so
 Be concise, friendly, practical, and specific. Use plain language rather than overwhelming beginners.`;
 
 export async function POST(request: NextRequest) {
-  const token = process.env.HF_TOKEN;
+  const groqKey = process.env.GROQ_API_KEY;
+  const hfToken = process.env.HF_TOKEN;
+  const token = groqKey || hfToken;
   if (!token) {
     return NextResponse.json(
-      { error: "Maestro AI is almost ready. The Hugging Face model token has not been added to the server yet." },
+      { error: "Maestro AI needs a model API key. Add GROQ_API_KEY in Vercel to enable the free Groq route." },
       { status: 503 }
     );
   }
@@ -49,15 +51,17 @@ export async function POST(request: NextRequest) {
       ? "The learner is aged 0–3. Address the parent or guardian, not the toddler. Suggest only short, gentle, supervised, age-appropriate sound play. Avoid small detachable objects, loud sounds, or activities requiring fine motor precision."
       : "The learner is aged 4 or older. Adapt vocabulary and activity complexity to the question; keep explanations accessible and encouraging.";
 
-    const upstream = await fetch("https://router.huggingface.co/v1/chat/completions", {
+    const endpoint = groqKey ? "https://api.groq.com/openai/v1/chat/completions" : "https://router.huggingface.co/v1/chat/completions";
+    const model = groqKey ? "openai/gpt-oss-20b" : "openai/gpt-oss-20b:fastest";
+    const upstream = await fetch(endpoint, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-oss-20b:fastest",
-        messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\nLearner guidance: " + ageGuidance }, ...messages],
+        model,
+        messages: [{ role: "system", content: SYSTEM_PROMPT + "\n\nLearner guidance: " + ageGuidance }, ...messages],
         max_tokens: 550,
         temperature: 0.65,
         stream: false,
@@ -67,13 +71,15 @@ export async function POST(request: NextRequest) {
 
     if (!upstream.ok) {
       const detail = await upstream.text();
-      console.error("Hugging Face inference error:", upstream.status, detail.slice(0, 500));
-      return NextResponse.json(
-        { error: upstream.status === 401 || upstream.status === 403
-          ? "The AI service token needs the Inference Providers permission."
-          : "Maestro couldn't reach its AI model just now. Please try again in a moment." },
-        { status: 502 }
-      );
+      console.error(groqKey ? "Groq inference error:" : "Hugging Face inference error:", upstream.status, detail.slice(0, 500));
+      const message = upstream.status === 401 || upstream.status === 403
+        ? "The AI provider rejected its API key. Check the key and permissions in Vercel."
+        : upstream.status === 402
+          ? "Hugging Face inference credits are exhausted. Add credits or configure GROQ_API_KEY in Vercel."
+          : upstream.status === 429
+            ? "Maestro is receiving too many requests. Please wait a moment and try again."
+            : "Maestro couldn't reach its AI model just now. Please try again in a moment.";
+      return NextResponse.json({ error: message }, { status: 502 });
     }
 
     const result = await upstream.json();
