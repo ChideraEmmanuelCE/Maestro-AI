@@ -131,3 +131,13 @@
 .theme-dark .family-panel>p,.theme-dark .family-add-form label{color:#a5aaba}
 .theme-dark .family-add-form input,.theme-dark .family-add-form select{background:#131722;border-color:#343a4c;color:#f1f2f7}
 @media(max-width:700px){.family-add-form{grid-template-columns:1fr}.family-add-form .primary-button{width:100%}}
+
+.drum-pad h3{margin:0;font:700 16px Manrope}
+.drum-pad-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;margin:9px 0}
+.drum-pad-grid button{display:grid;justify-items:center;gap:6px;padding:10px 3px;border:1px solid #e3e0da;border-radius:10px;background:#f8f6f2;color:#4c4f5b}
+.drum-pad-grid button:active{transform:scale(.96);background:#e9e6ff;border-color:#8d86fa}
+.drum-pad-grid b{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#5147d9;color:white;font-size:10px}
+.drum-pad-grid span{font-size:8px;font-weight:700}
+.theme-dark .drum-pad-grid button{background:#242a3a;border-color:#3b4358;color:#e3e5ee}
+.theme-dark .drum-pad-grid button:active{background:#37345a;border-color:#8d86fa}
+@media(max-width:700px){.drum-pad-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.drum-pad-grid span{font-size:7px}}
