@@ -47,7 +47,8 @@ export default function Page(){
   const [showParent,setShowParent]=useState(false);
   const chatEnd=useRef<HTMLDivElement>(null);
   const toddler=account?.ageBand==="0-3";
-  const lesson=lessons.find(x=>x.id===activeLesson)||null;\n  const LessonIcon=lesson?.icon ?? Music2;
+  const lesson=lessons.find(x=>x.id===activeLesson)||null;
+  const LessonIcon=lesson?.icon ?? Music2;
 
   useEffect(()=>{try{const a=localStorage.getItem(STORE);if(a)setAccount(JSON.parse(a));setProgress(readProgress());const c=JSON.parse(localStorage.getItem(CHAT)||"[]");if(Array.isArray(c))setChat(c);}catch{}setReady(true);},[]);
   useEffect(()=>{if(ready&&account)localStorage.setItem(STORE,JSON.stringify(account));},[account,ready]);
