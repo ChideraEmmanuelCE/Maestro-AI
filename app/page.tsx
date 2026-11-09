@@ -259,7 +259,11 @@ function VoicePitchDetector(){
   const [running,setRunning]=useState(false);
   const [pitch,setPitch]=useState<number|null>(null);
   const [error,setError]=useState("");
+  const [recording,setRecording]=useState(false);
+  const [recordedUrl,setRecordedUrl]=useState<string|null>(null);
   const contextRef=useRef<AudioContext|null>(null);
+  const recorderRef=useRef<MediaRecorder|null>(null);
+  const chunksRef=useRef<Blob[]>([]);
   const streamRef=useRef<MediaStream|null>(null);
   const frameRef=useRef<number|null>(null);
   async function start(){
@@ -274,18 +278,24 @@ function VoicePitchDetector(){
       detect();setRunning(true);
     }catch(e){setError(e instanceof Error?e.message:"Microphone permission was denied.");}
   }
+  function startRecording(){
+    const stream=streamRef.current;if(!stream){setError("Start microphone detection before recording.");return;}
+    try{const mimeType=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";const recorder=new MediaRecorder(stream,mimeType?{mimeType}:undefined);chunksRef.current=[];recorder.ondataavailable=event=>{if(event.data.size)chunksRef.current.push(event.data);};recorder.onstop=()=>{const blob=new Blob(chunksRef.current,{type:recorder.mimeType||"audio/webm"});if(blob.size){if(recordedUrl)URL.revokeObjectURL(recordedUrl);setRecordedUrl(URL.createObjectURL(blob));}};recorder.start();recorderRef.current=recorder;setRecording(true);setError("");}catch(e){setError(e instanceof Error?e.message:"Recording could not start in this browser.");}
+  }
+  function stopRecording(){if(recorderRef.current&&recorderRef.current.state!=="inactive")recorderRef.current.stop();recorderRef.current=null;setRecording(false);}
   function stop(){
+    if(recording)stopRecording();
     if(frameRef.current!==null)cancelAnimationFrame(frameRef.current);
     streamRef.current?.getTracks().forEach(track=>track.stop());streamRef.current=null;
     if(contextRef.current){void contextRef.current.close();contextRef.current=null;}
     setRunning(false);setPitch(null);
   }
-  useEffect(()=>()=>{if(frameRef.current!==null)cancelAnimationFrame(frameRef.current);streamRef.current?.getTracks().forEach(track=>track.stop());if(contextRef.current)void contextRef.current.close();},[]);
+  useEffect(()=>()=>{if(frameRef.current!==null)cancelAnimationFrame(frameRef.current);streamRef.current?.getTracks().forEach(track=>track.stop());if(contextRef.current)void contextRef.current.close();if(recordedUrl)URL.revokeObjectURL(recordedUrl);},[]);
   const midi=pitch?Math.round(69+12*Math.log2(pitch/440)):null;
   const names=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
   const noteName=midi===null?"—":names[((midi%12)+12)%12]+(Math.floor(midi/12)-1);
   const cents=pitch&&midi!==null?Math.round(1200*Math.log2(pitch/(440*Math.pow(2,(midi-69)/12)))):0;
-  return <div className="voice-tuner"><span className="tool-icon"><Mic2/></span><h3>Voice pitch practice</h3><p>Sing one comfortable sustained note. Maestro detects its fundamental pitch in real time; audio stays in your browser.</p><div className="pitch-readout"><strong>{noteName}</strong><span>{pitch?pitch.toFixed(1)+" Hz":"Waiting for voice"}</span></div>{pitch!==null&&<div className="pitch-meter"><i style={{left:(50+Math.max(-50,Math.min(50,cents)))*1+"%"}}/></div>}<small className="pitch-cents">{pitch!==null?(cents>0?"+":"")+cents+" cents from "+noteName:"Use a quiet room and sing steadily, not loudly."}</small><button className={running?"outline-button":"primary-button"} onClick={running?stop:()=>void start()}>{running?<><Pause size={15}/> Stop microphone</>:<><Mic2 size={15}/> Start pitch detection</>}</button>{error&&<p className="form-error">{error}</p>}</div>;
+  return <div className="voice-tuner"><span className="tool-icon"><Mic2/></span><h3>Voice pitch practice</h3><p>Sing one comfortable sustained note. Maestro detects its fundamental pitch in real time; audio stays in your browser.</p><div className="pitch-readout"><strong>{noteName}</strong><span>{pitch?pitch.toFixed(1)+" Hz":"Waiting for voice"}</span></div>{pitch!==null&&<div className="pitch-meter"><i style={{left:(50+Math.max(-50,Math.min(50,cents)))*1+"%"}}/></div>}<small className="pitch-cents">{pitch!==null?(cents>0?"+":"")+cents+" cents from "+noteName:"Use a quiet room and sing steadily, not loudly."}</small><div className="voice-actions"><button className={running?"outline-button":"primary-button"} onClick={running?stop:()=>void start()}>{running?<><Pause size={15}/> Stop microphone</>:<><Mic2 size={15}/> Start pitch detection</>}</button><button className={recording?"record-button recording":"outline-button"} disabled={!running&&!recording} onClick={recording?stopRecording:startRecording}>{recording?"Stop recording":"Record a take"}</button></div>{recordedUrl&&<div className="recorded-take"><span>Latest recording is ready</span><audio controls src={recordedUrl}/><a href={recordedUrl} download={"maestro-practice-take.webm"}>Download take</a></div>}{error&&<p className="form-error">{error}</p>}</div>;
 }
 
 function Metronome({bpm}:{bpm:number}){const [beat,setBeat]=useState(0);useEffect(()=>{const id=setInterval(()=>{setBeat(v=>(v+1)%4);playClick();},60000/bpm);return()=>clearInterval(id);},[bpm]);return <div className="metronome-beats" aria-label={`Metronome at ${bpm} beats per minute`}>{[0,1,2,3].map(i=><span key={i} className={beat===i?"beat-active":""}/>)}</div>}
