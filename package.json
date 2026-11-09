@@ -8,11 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.1",
+    "@tonejs/midi": "^2.0.28",
     "lucide-react": "^0.468.0",
     "next": "15.5.29",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
