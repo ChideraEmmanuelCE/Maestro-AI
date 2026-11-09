@@ -189,7 +189,10 @@ export function exportArrangementMidi(arrangement: Arrangement) {
       });
     }
   }
-  const blob = new Blob([midi.toArray()], { type: "audio/midi" });
+  const bytes = midi.toArray();
+  const buffer = new ArrayBuffer(bytes.length);
+  new Uint8Array(buffer).set(bytes);
+  const blob = new Blob([buffer], { type: "audio/midi" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
