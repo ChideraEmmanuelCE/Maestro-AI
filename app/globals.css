@@ -228,3 +228,22 @@
 .theme-dark .achievement-card small,.theme-dark .achievement-count{color:#a5aaba}
 @media(max-width:760px){.achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.achievement-grid{grid-template-columns:1fr}}
+
+.weekly-goal-card{margin:18px 0;padding:18px 20px;border:1px solid var(--line);border-radius:15px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:10px}
+.weekly-goal-card h2{font:700 16px Manrope;margin:4px 0}
+.weekly-goal-card p{font-size:10px;color:#858994;margin:0}
+.weekly-goal-value{align-self:center;display:flex;align-items:baseline;gap:4px}
+.weekly-goal-value b{font:800 24px Manrope;color:var(--brand)}
+.weekly-goal-value span{font-size:10px;color:#858994}
+.weekly-goal-track{grid-column:1/-1;height:7px;border-radius:8px;background:#eeedf2;overflow:hidden}
+.weekly-goal-track i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#8d86fa,#5b9d7b)}
+.weekly-goal-setting{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:14px 0 17px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.weekly-goal-setting label{display:grid;gap:6px;font-size:10px;font-weight:800;color:#6e7280}
+.weekly-goal-setting input{width:110px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--white);color:var(--ink)}
+.theme-dark .weekly-goal-card{background:#1a1f2c;border-color:#303647}
+.theme-dark .weekly-goal-card p,.theme-dark .weekly-goal-value span{color:#a5aaba}
+.theme-dark .weekly-goal-track{background:#303647}
+.theme-dark .weekly-goal-setting{background:#151a26;border-color:#343a4c}
+.theme-dark .weekly-goal-setting label{color:#c8ccda}
+.theme-dark .weekly-goal-setting input{background:#222737;border-color:#3b4358;color:#f0f1f7}
+@media(max-width:700px){.weekly-goal-setting{align-items:stretch;flex-direction:column}.weekly-goal-setting .outline-button{width:100%}}
