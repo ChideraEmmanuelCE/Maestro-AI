@@ -8,7 +8,7 @@ Maestro AI is being rebuilt as an age-adaptive music education studio: structure
 - Lesson objectives, concept explanations, listening prompts, practical activities and four-question mastery checks. Learners must score at least 75% before a lesson is marked mastered; best score and attempt count are persisted to Supabase when cloud auth is configured.
 - Three-octave sample-based piano playback using the Salamander soundfont, with a local synthesizer fallback.
 - Interactive guitar fretboard with playable open strings/frets and common chord voicings.
-- Five-pad synthesized drum kit and real-time microphone pitch detection.
+- Five-pad synthesized drum kit, real-time microphone pitch detection and browser-based practice recording with playback/download of takes.
 - Prompt-driven four-bar procedural compositions plus a multitrack C-major arrangement with melody, harmony, bass and percussion.
 - Tempo control, track muting, arrangement playback and MIDI export.
 - Maestro AI function tools for playing concept examples, generating music, opening practice and controlling the metronome.
@@ -57,7 +57,7 @@ Never expose service-role keys or model-provider secrets in browser code.
 
 ## Important release status
 
-This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. Cloud sign-in, profile switching, lesson-mastery sync and composition records are wired, but they cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Full practice-session analytics, microphone performance scoring, external generative-model audio and MP3/WAV export are not yet shipped. The microphone tuner detects pitch locally; it does not upload or retain microphone audio. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
+This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. Cloud sign-in, profile switching, lesson-mastery sync and composition records are wired, but they cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Full practice-session analytics, microphone performance scoring, external generative-model audio and MP3/WAV export are not yet shipped. The microphone tuner analyses pitch locally. Optional practice recordings remain in browser memory and can be played back or downloaded; they are not uploaded to Supabase. Automated pitch-accuracy scoring, timing-deviation analysis, cloud practice-session history, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
 
 ## Audio notes
 
