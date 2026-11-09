@@ -116,3 +116,5 @@
 .pitch-cents{font-size:9px;color:#8b8e99;min-height:14px}
 .theme-dark .voice-tuner>p,.theme-dark .pitch-readout span,.theme-dark .pitch-cents{color:#a5aaba}
 .theme-dark .pitch-readout strong{color:#c0baff}
+
+.auth-notice{margin:0;padding:12px 13px;border:1px solid #c9e4d6;border-radius:11px;background:#effaf3;color:#236b4c;font-size:11px;line-height:1.6}
