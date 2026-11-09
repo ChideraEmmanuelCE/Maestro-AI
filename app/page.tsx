@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
-  AudioLines, BookOpen, Home, Music2, Mic2, MessageCircle, ChartNoAxesColumn,
+  AudioLines, BookOpen, Home, Music2, Mic2, MessageCircle, BarChart3,
   UserRound, Settings, LogOut, ChevronRight, ChevronLeft, Play, Pause, Check,
   Sparkles, Headphones, Piano, Drum, Guitar, Heart, Menu, X, Send, Volume2,
-  Clock3, Target, Star, LockKeyhole, Mail, User, Baby, ArrowRight, RotateCcw,
-  CircleHelp, WandSparkles, Music, Footprints, BookHeart
+  Clock3, Target, LockKeyhole, Mail, User, Baby, ArrowRight,
+  CircleHelp, WandSparkles
 } from "lucide-react";
 
 type Learner = { name:string; email:string; learnerName:string; ageBand:"0-3"|"4+"; createdAt:string };
