@@ -130,6 +130,31 @@ export async function playLessonExample(kind: "scale" | "chord" | "rhythm" | "in
   }
   await playArrangement({title:"Lesson "+kind+" example",bpm,beatsPerBar:4,bars:kind==="interval"?3:4,events});
 }
+export function generateProceduralComposition(prompt: string, bpm = 88): Arrangement {
+  const text = prompt.toLowerCase();
+  const minor = /minor|sad|moody|cinematic|melancholy/.test(text);
+  const root = /\b(a minor|am|key of a)\b/.test(text) ? 57 : /\b(g major|key of g)\b/.test(text) ? 67 : /\b(f major|key of f)\b/.test(text) ? 65 : 60;
+  const scale = minor ? [0,2,3,5,7,8,10] : [0,2,4,5,7,9,11];
+  const chordDegrees = minor ? [0,5,2,6] : [0,5,3,4];
+  let seed = Array.from(text).reduce((value,char)=>(value*31+char.charCodeAt(0))>>>0, 17);
+  const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const events: NoteEvent[] = [];
+  chordDegrees.forEach((degree,bar)=>{
+    const chord = [0,2,4].map(offset=>root+scale[(degree+offset)%7]+(degree+offset>=7?12:0));
+    chord.forEach(midi=>events.push({track:"harmony",midi,beat:bar*4,beats:3.75,velocity:0.42}));
+    events.push({track:"bass",midi:root+scale[degree]-12,beat:bar*4,beats:1.8,velocity:0.64});
+    events.push({track:"bass",midi:root+scale[degree]-12,beat:bar*4+2,beats:1.8,velocity:0.52});
+  });
+  let previous = 0;
+  for(let beat=0;beat<16;beat++){
+    const degree = beat%4===3 ? (random()>.5?4:2) : Math.max(0,Math.min(6,previous+(Math.floor(random()*5)-2)));
+    previous = degree;
+    events.push({track:"melody",midi:root+scale[degree]+12,beat:beat+((beat%4===1&&random()>.65)?.5:0),beats:beat%4===3?0.8:0.42,velocity:beat%4===0?0.86:0.68});
+  }
+  for(let beat=0;beat<16;beat++) events.push({track:"drums",midi:beat%4===0?60:beat%2===0?55:52,beat,beats:0.1,velocity:beat%4===0?0.78:0.4});
+  const style = /waltz|3\/4/.test(text) ? "Waltz" : /jazz/.test(text) ? "Jazz" : /ambient|calm|soft/.test(text) ? "Ambient" : minor ? "Minor study" : "Major study";
+  return {title:style+" · "+(minor?"A minor":"C major")+" composition",bpm,beatsPerBar:4,bars:4,events};
+}
 export function makeCmajorStudy(bpm = 84): Arrangement {
   const melody = [60,62,64,65,67,69,71,72,71,69,67,65,64,62,60];
   const events: NoteEvent[] = melody.map((midi, i) => ({
