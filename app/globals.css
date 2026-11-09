@@ -103,3 +103,16 @@
 .theme-dark .piano-key span{color:#555}
 .theme-light{background:var(--paper);color:var(--ink)}
 @media(max-width:700px){.theme-dark .mobile-bottom-nav{background:#191d29;border-color:#303647}.theme-dark .mobile-bottom-nav button{color:#aeb4c4}.theme-dark .mobile-bottom-nav button.mobile-nav-active{color:#c3bdff}}
+
+.voice-tuner{display:grid;justify-items:start;gap:9px}
+.voice-tuner h3{margin:0;font:700 16px Manrope}
+.voice-tuner>p{font-size:11px;color:#81838c;line-height:1.6;margin:0 0 4px}
+.pitch-readout{display:flex;align-items:baseline;gap:12px;margin-top:3px}
+.pitch-readout strong{font:800 34px Manrope;color:var(--brand);letter-spacing:-1.5px}
+.pitch-readout span{font-size:11px;color:#858994}
+.pitch-meter{height:8px;width:100%;border-radius:10px;background:linear-gradient(90deg,#d9a16f 0%,#d9a16f 35%,#65ad88 48%,#65ad88 52%,#d9a16f 65%,#d9a16f 100%);position:relative;margin:5px 0}
+.pitch-meter:after{content:"";position:absolute;left:50%;top:-3px;height:14px;width:2px;background:#242635}
+.pitch-meter i{position:absolute;top:-5px;width:4px;height:18px;border-radius:4px;background:#5147d9;transform:translateX(-50%);z-index:1}
+.pitch-cents{font-size:9px;color:#8b8e99;min-height:14px}
+.theme-dark .voice-tuner>p,.theme-dark .pitch-readout span,.theme-dark .pitch-cents{color:#a5aaba}
+.theme-dark .pitch-readout strong{color:#c0baff}
