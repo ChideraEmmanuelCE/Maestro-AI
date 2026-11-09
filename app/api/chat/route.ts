@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "Qwen/Qwen2.5-7B-Instruct-1M:fastest",
+        model: "google/gemma-2-2b-it:fastest",
         messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\nLearner guidance: " + ageGuidance }, ...messages],
         max_tokens: 550,
         temperature: 0.65,
