@@ -1,0 +1,1 @@
+import type {Metadata} from "next";import "./globals.css";export const metadata:Metadata={title:"Maestro AI — Your personal music coach",description:"Learn music your way with an AI coach that listens, guides and celebrates every note."};export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}</body></html>};
