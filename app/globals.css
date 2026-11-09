@@ -149,3 +149,24 @@
 .black-keys button{pointer-events:auto;width:2.55%;height:60%;top:0}
 .theme-dark .piano-key{background:#f9f9fb;color:#252733}
 .theme-dark .piano-key span{color:#4e5260}
+
+.guitar-panel{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:23px}
+.guitar-chord-picker{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.guitar-chord-picker button{min-width:42px;border:1px solid var(--line);border-radius:9px;background:#f8f6f2;padding:9px 12px;font:800 12px Manrope;color:#535663}
+.guitar-chord-picker button.selected{background:#5147d9;border-color:#5147d9;color:#fff}
+.fretboard-grid{display:grid;grid-template-columns:42px repeat(6,minmax(26px,1fr));align-items:center;gap:0;min-width:390px}
+.fretboard-corner,.fret-number{font-size:8px;font-weight:800;letter-spacing:.7px;color:#8b8d96;text-align:center;padding:7px 0}
+.string-label{font-size:10px;color:#555a67;text-align:center}
+.fret-cell{height:37px;border:0;border-top:1px solid #b5a995;background:linear-gradient(180deg,#eee2cd,#e5d5b8);position:relative;display:grid;place-items:center}
+.fret-cell:after{content:"";position:absolute;right:0;top:0;bottom:0;width:2px;background:#b3a68f}
+.fret-cell i{width:8px;height:8px;border-radius:50%;background:transparent}
+.fret-cell.active i{width:17px;height:17px;background:#5147d9;box-shadow:0 2px 7px #5147d955}
+.fret-cell:active{filter:brightness(.94)}
+.fretboard-help{font-size:9px;color:#8b8e98;margin:12px 0 0}
+.theme-dark .guitar-panel{background:#1a1f2c;border-color:#303647;color:#edf0f7}
+.theme-dark .guitar-chord-picker button{background:#242a3a;border-color:#3b4358;color:#e1e3ed}
+.theme-dark .guitar-chord-picker button.selected{background:#5147d9;color:#fff}
+.theme-dark .string-label{color:#c5c9d5}
+.theme-dark .fretboard-help{color:#a5aaba}
+.guitar-fretboard{overflow-x:auto}
+@media(max-width:700px){.guitar-panel{padding:17px}}
