@@ -98,7 +98,7 @@ export default function Page(){
               const profile=profiles[0];
               if(alive)setAccount({id:profile.id,guardianId:user.id,name:String(user.user_metadata?.display_name||user.email||"Guardian"),email:user.email||"",learnerName:profile.display_name,ageBand:profile.age_band,createdAt:user.created_at});
               const {data:rows}=await supabase.from("lesson_progress").select("lesson_id,status,mastered_at").eq("learner_id",profile.id);
-              if(alive&&rows){setProgress(prev=>({...prev,completed:rows.filter(row=>row.status==="mastered").map(row=>row.lesson_id)}));setWeeklyMinutes(rows.filter(row=>row.status==="mastered"&&row.mastered_at&&new Date(row.mastered_at)>=new Date(weekStartDate())).reduce((sum,row)=>sum+(lessons.find(item=>item.id===row.lesson_id)?.minutes||0),0));}
+              if(alive&&rows){setProgress(prev=>({...prev,completed:rows.filter(row=>row.status==="mastered").map(row=>row.lesson_id)}));setWeeklyMinutes(rows.filter(row=>row.status==="mastered"&&row.mastered_at&&new Date(row.mastered_at)>=new Date(weekStartDate())).reduce((sum,row)=>sum+(Number(lessons.find(item=>item.id===row.lesson_id)?.duration.match(/\d+/)?.[0])||0),0));}
               const {data:goal}=await supabase.from("weekly_goals").select("target_minutes").eq("learner_id",profile.id).eq("week_start",weekStartDate()).maybeSingle();if(alive&&goal)setWeeklyGoalMinutes(goal.target_minutes);
               const {data:pieces}=await supabase.from("generated_pieces").select("title,created_at,arrangement").eq("learner_id",profile.id).order("created_at",{ascending:false}).limit(30);
               if(alive&&pieces)setSavedPieces(pieces.map(piece=>({title:piece.title,createdAt:piece.created_at,arrangement:piece.arrangement as Arrangement})));
