@@ -18,10 +18,11 @@ The current profile system uses browser localStorage as a temporary, device-loca
 
 ## AI tutor setup
 
-1. Create a fine-grained Hugging Face token at https://huggingface.co/settings/tokens.
-2. Enable **Make calls to Inference Providers**.
-3. Add it to Vercel as the encrypted Production environment variable `HF_TOKEN`.
-4. Redeploy after changing the environment variable.
+1. Create a free Groq API key at https://console.groq.com/keys.
+2. Add it to Vercel as the encrypted Production environment variable `GROQ_API_KEY`.
+3. Redeploy after changing the environment variable. The app uses the open-weight GPT-OSS 20B model on Groq's free, rate-limited developer tier.
+
+An optional `HF_TOKEN` fallback is supported, but Hugging Face Inference Providers may require prepaid credits.
 
 The server calls the Hugging Face OpenAI-compatible chat-completions endpoint. The token is never sent to the browser. Chat is text-only: the tutor does not claim to listen to microphone recordings.
 
