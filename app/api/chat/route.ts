@@ -46,10 +46,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Your latest message must be a question or prompt." }, { status: 400 });
     }
 
-    const learnerAgeBand = body.learnerAgeBand === "0-3" ? "0-3" : "4+";
-    const ageGuidance = learnerAgeBand === "0-3"
-      ? "The learner is aged 0–3. Address the parent or guardian, not the toddler. Suggest only short, gentle, supervised, age-appropriate sound play. Avoid small detachable objects, loud sounds, or activities requiring fine motor precision."
-      : "The learner is aged 4 or older. Adapt vocabulary and activity complexity to the question; keep explanations accessible and encouraging.";
+    const learnerAgeBand = ["4-8", "9-16", "adult"].includes(body.learnerAgeBand) ? body.learnerAgeBand : "adult";
+    const ageGuidance = learnerAgeBand === "4-8"
+      ? "The learner is aged 4–8. Address the child in warm, concrete language and keep activities short, playful and supervised by a parent or guardian."
+      : learnerAgeBand === "9-16"
+        ? "The learner is aged 9–16. Use a structured teaching style, practical examples and clear skill progression without talking down to the learner."
+        : "The learner is an adult. Respect prior knowledge, explain terminology precisely and support independent practice.";
 
     const endpoint = groqKey ? "https://api.groq.com/openai/v1/chat/completions" : "https://router.huggingface.co/v1/chat/completions";
     const model = groqKey ? "openai/gpt-oss-20b" : "openai/gpt-oss-20b:fastest";
