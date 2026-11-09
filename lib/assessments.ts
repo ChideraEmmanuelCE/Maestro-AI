@@ -42,3 +42,18 @@ export const assessmentBank:Record<string,LessonExercise[]> = {
     q("What is a common way to create melodic resolution in C major?",["End on B","End on C","End on F-sharp"],1,"Returning to the tonic C gives a strong sense of arrival.")
   ]
 };
+
+
+const assessmentExtras: Record<string, LessonExercise> = {
+  Listening:q("Which description refers to timbre?",["The colour or quality of a sound","The speed of the pulse","The distance between pitches"],0,"Timbre is the characteristic tone colour that helps distinguish sound sources."),
+  Piano:q("What is the name for the distance from one C to the next C?",["A fifth","An octave","A third"],1,"The distance from a note to the next note with the same letter name is an octave."),
+  Rhythm:q("If a tempo changes from 80 BPM to 100 BPM, what changes?",["The beat rate","The pitch of every note","The key signature"],0,"A higher BPM means more beats occur each minute."),
+  Notation:q("What does a clef establish?",["The pitch names assigned to staff positions","The loudness of the piece","The instrument's tuning frequency"],0,"A clef maps staff lines and spaces to specific pitch names."),
+  Scales:q("In C major, what is the tonic?",["G","C","B"],1,"The tonic is scale degree 1, the tonal centre of the key."),
+  "Ear training":q("What does an interval measure?",["The distance between two pitches","The loudness of a chord","The duration of a bar"],0,"An interval describes the pitch distance between two notes."),
+  Chords:q("How many distinct pitch classes are in a basic triad?",["Two","Three","Four"],1,"A triad contains three chord tones: root, third and fifth."),
+  Harmony:q("What is the tonic chord in C major?",["C major","G major","F major"],0,"The tonic is the I chord, built on the first scale degree."),
+  Guitar:q("Which guitar string is numbered string 6?",["The thinnest string","The thickest string","The second-thinnest string"],1,"String 6 is the thickest string and is tuned to low E2."),
+  Composition:q("What does melodic contour describe?",["The shape made by rising and falling pitches","The instrument's volume","The number of performers"],0,"Contour describes the direction and shape of pitch movement over time.")
+};
+for (const [category, item] of Object.entries(assessmentExtras)) assessmentBank[category].push(item);
