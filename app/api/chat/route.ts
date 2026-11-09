@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemma-2-2b-it:fastest",
+        model: "openai/gpt-oss-20b:fastest",
         messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\nLearner guidance: " + ageGuidance }, ...messages],
         max_tokens: 550,
         temperature: 0.65,
