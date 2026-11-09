@@ -13,6 +13,14 @@ If a question is unrelated to music, answer briefly and kindly steer the learner
 Never invent facts about songs, artists, chords, or theory. If uncertain, say so.
 Be concise, friendly, practical, and specific. Use plain language rather than overwhelming beginners.`;
 
+const MUSIC_TOOLS = [
+  { type:"function", function:{ name:"play_music_example", description:"Play a short audible demonstration of a music concept for the learner.", parameters:{type:"object",properties:{kind:{type:"string",enum:["scale","chord","rhythm","interval","progression","melody"]},rootMidi:{type:"integer",minimum:36,maximum:84},bpm:{type:"integer",minimum:40,maximum:220}},required:["kind","rootMidi","bpm"],additionalProperties:false} } },
+  { type:"function", function:{ name:"generate_composition", description:"Create and immediately play an original four-bar procedural music sketch based on the learner's prompt.", parameters:{type:"object",properties:{prompt:{type:"string",minLength:3,maxLength:300},bpm:{type:"integer",minimum:40,maximum:220}},required:["prompt","bpm"],additionalProperties:false} } },
+  { type:"function", function:{ name:"open_practice_studio", description:"Open the learner's instrument and practice studio.", parameters:{type:"object",properties:{},additionalProperties:false} } },
+  { type:"function", function:{ name:"start_metronome", description:"Open practice studio and start the metronome at a chosen tempo.", parameters:{type:"object",properties:{bpm:{type:"integer",minimum:40,maximum:220}},required:["bpm"],additionalProperties:false} } },
+  { type:"function", function:{ name:"stop_music", description:"Stop the currently playing generated arrangement.", parameters:{type:"object",properties:{},additionalProperties:false} } }
+];
+
 export async function POST(request: NextRequest) {
   const groqKey = process.env.GROQ_API_KEY;
   const hfToken = process.env.HF_TOKEN;
@@ -64,8 +72,11 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model,
         messages: [{ role: "system", content: SYSTEM_PROMPT + "\n\nLearner guidance: " + ageGuidance }, ...messages],
-        max_tokens: 550,
-        temperature: 0.65,
+        max_tokens: 700,
+        temperature: 0.55,
+        tools: MUSIC_TOOLS,
+        tool_choice: "auto",
+        parallel_tool_calls: false,
         stream: false,
       }),
       signal: AbortSignal.timeout(25000),
@@ -85,12 +96,20 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await upstream.json();
-    const reply = result.choices?.[0]?.message?.content;
-    if (typeof reply !== "string" || !reply.trim()) {
+    const message = result.choices?.[0]?.message;
+    const reply = typeof message?.content === "string" ? message.content.trim() : "";
+    const actions = Array.isArray(message?.tool_calls) ? message.tool_calls.slice(0,2).flatMap((call: {function?:{name?:string;arguments?:string}}) => {
+      try {
+        const name = call.function?.name || "";
+        const args = JSON.parse(call.function?.arguments || "{}");
+        if (!MUSIC_TOOLS.some(tool => tool.function.name === name)) return [];
+        return [{name,arguments:args}];
+      } catch { return []; }
+    }) : [];
+    if (!reply && actions.length === 0) {
       return NextResponse.json({ error: "Maestro returned an empty answer. Please try again." }, { status: 502 });
     }
-
-    return NextResponse.json({ reply: reply.trim() });
+    return NextResponse.json({ reply: reply || "I’ve prepared that musical action for you.", actions });
   } catch (error) {
     console.error("Maestro chat route error:", error);
     return NextResponse.json({ error: "Something went wrong while talking to Maestro. Please try again." }, { status: 500 });
