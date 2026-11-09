@@ -57,7 +57,7 @@ Never expose service-role keys or model-provider secrets in browser code.
 
 ## Important release status
 
-This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. Cloud sign-in, profile switching, lesson-mastery sync and composition records are wired, but they cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Full practice-session analytics, weekly-goal UI, microphone performance scoring, external generative-model audio and MP3/WAV export are not yet shipped. The microphone tuner detects pitch locally; it does not upload or retain microphone audio. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
+This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. Cloud sign-in, profile switching, lesson-mastery sync and composition records are wired, but they cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Full practice-session analytics, microphone performance scoring, external generative-model audio and MP3/WAV export are not yet shipped. The microphone tuner detects pitch locally; it does not upload or retain microphone audio. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
 
 ## Audio notes
 
