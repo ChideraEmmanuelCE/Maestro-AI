@@ -28,19 +28,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Please send a valid chat message." }, { status: 400 });
     }
 
-    const messages = body.messages.map((message: { role?: string; content?: string }) => {
-      if (!["user", "assistant"].includes(message.role || "") || typeof message.content !== "string") {
-        return NextResponse.json({ error: "One of the chat messages is invalid." }, { status: 400 });
-      }
-      return { role: message.role, content: message.content.slice(0, 2500) };
-    });
+    const invalidMessage = body.messages.some((message: { role?: string; content?: string }) =>
+      !["user", "assistant"].includes(message?.role || "") || typeof message?.content !== "string"
+    );
+    if (invalidMessage) {
+      return NextResponse.json({ error: "One of the chat messages is invalid." }, { status: 400 });
+    }
+    const messages = body.messages.map((message: { role: "user" | "assistant"; content: string }) => ({
+      role: message.role,
+      content: message.content.slice(0, 2500),
+    }));
 
     const latest = messages[messages.length - 1];
     if (latest.role !== "user" || !latest.content.trim()) {
       return NextResponse.json({ error: "Your latest message must be a question or prompt." }, { status: 400 });
     }
 
-    const upstream = await fetch("https://router.huggingface.co/v1/chat/completions", {
+    const learnerAgeBand = body.learnerAgeBand === "0-3" ? "0-3" : "4+";
+    const ageGuidance = learnerAgeBand === "0-3"
+      ? "The learner is aged 0–3. Address the parent or guardian, not the toddler. Suggest only short, gentle, supervised, age-appropriate sound play. Avoid small detachable objects, loud sounds, or activities requiring fine motor precision."
+      : "The learner is aged 4 or older. Adapt vocabulary and activity complexity to the question; keep explanations accessible and encouraging.";
+
+    const upstream = await fetch("https://router.huggingface.co/v1/chat/completions",
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: "Qwen/Qwen2.5-7B-Instruct-1M:fastest",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        messages: [{ role: "system", content: SYSTEM_PROMPT + "\\n\\nLearner guidance: " + ageGuidance }, ...messages],
         max_tokens: 550,
         temperature: 0.65,
         stream: false,
