@@ -62,3 +62,44 @@
 .saved-piece-row button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;color:#5147d9;font-size:9px;font-weight:800}
 .age-options{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:700px){.backing-track-panel,.composition-generator{padding:17px}.backing-track-controls>*{flex:1}.track-mutes{gap:6px}.track-mutes button{padding:8px 10px}.age-options{grid-template-columns:1fr}}
+
+/* Product theme: dark by default, with an explicit light-mode override */
+.theme-dark{--ink:#eef0f7;--muted:#a6adbd;--line:#2b3040;--paper:#11141d;--white:#1b1f2c;--brand:#aaa4ff;--brand-dark:#8d86fa;--mint:#292740;--gold:#edc47e;--shadow:0 16px 44px rgba(0,0,0,.24);background:#11141d;color:#eef0f7}
+.theme-dark .app-main,.theme-dark .page-content{background:#11141d;color:#eef0f7}
+.theme-dark .app-header{background:#191d29;border-color:#2b3040;color:#eef0f7}
+.theme-dark .header-breadcrumb,.theme-dark .header-profile{color:#b9bdca}
+.theme-dark .header-breadcrumb b{color:#f0f1f6}
+.theme-dark .header-profile button{background:#222737;border-color:#34394b;color:#bcb7ff}
+.theme-dark .page-heading p,.theme-dark .pathway-card p,.theme-dark .lesson-card p,.theme-dark .practice-title p,.theme-dark .metric-grid p,.theme-dark .progress-summary small{color:#a5aaba}
+.theme-dark .pathway-card,.theme-dark .lesson-card,.theme-dark .metric-grid article,.theme-dark .progress-summary article,.theme-dark .practice-panel,.theme-dark .practice-tools article,.theme-dark .profile-panel,.theme-dark .settings-panel,.theme-dark .maestro-chat,.theme-dark .lesson-panel,.theme-dark .backing-track-panel,.theme-dark .composition-generator,.theme-dark .empty-state{background:#1a1f2c;border-color:#303647;color:#edf0f7;box-shadow:0 12px 30px #00000018}
+.theme-dark .pathway-card h3,.theme-dark .lesson-card h3,.theme-dark .section-heading h2,.theme-dark .practice-title h2,.theme-dark .practice-tools h3,.theme-dark .settings-panel h3,.theme-dark .profile-panel h2,.theme-dark .empty-state h3{color:#f0f1f7}
+.theme-dark .metric-grid b,.theme-dark .progress-summary b{color:#f4f5fa}
+.theme-dark .metric-icon,.theme-dark .pathway-icon,.theme-dark .lesson-card-icon,.theme-dark .tool-icon,.theme-dark .profile-avatar{background:#302e4d;color:#bdb7ff}
+.theme-dark .outline-button{background:#222737;border-color:#3a4052;color:#d8d9e4}
+.theme-dark .outline-button:hover{background:#2c3044;border-color:#817af1;color:#d8d4ff}
+.theme-dark .tutor-callout{background:#25243c;border-color:#3b385f;color:#f1efff}
+.theme-dark .tutor-callout b{color:#f1efff}
+.theme-dark .tutor-callout p{color:#b8b5d1}
+.theme-dark .tutor-callout>span{background:#37345a;color:#c5c0ff}
+.theme-dark .lesson-practice-keys{background:#222737;border-color:#343a4d}
+.theme-dark .lesson-practice-keys>span,.theme-dark .lesson-coach-tip{color:#b5b9c8}
+.theme-dark .lesson-practice-keys button{background:#30364a;border-color:#424960;color:#f0f1f7}
+.theme-dark .lesson-controls{border-color:#303647}
+.theme-dark .lesson-instruction{color:#e4e6ef}
+.theme-dark .setting-row{border-color:#303647;color:#b8bdcc}
+.theme-dark .setting-row b{color:#edf0f7}
+.theme-dark .storage-warning{background:#252b39;color:#b8bdcc}
+.theme-dark .composition-prompt-label{color:#c8ccda}
+.theme-dark .composition-prompt-label textarea{background:#131722;border-color:#343a4c;color:#f1f2f7}
+.theme-dark .saved-library{border-color:#343a4c}
+.theme-dark .saved-library-heading{color:#edf0f7}
+.theme-dark .saved-piece-row{border-color:#303647}
+.theme-dark .saved-piece-row>span{background:#302e4d;color:#bdb7ff}
+.theme-dark .saved-piece-row button{background:#252b3a;border-color:#3c4357;color:#c6c1ff}
+.theme-dark .track-mutes button{background:#292f40;border-color:#3b4358;color:#e1e3ed}
+.theme-dark .track-mutes button.track-muted{background:#11141d;color:#8c91a2}
+.theme-dark .app-footer{border-color:#303647;color:#8f95a6}
+.theme-dark .piano-key{background:#f8f8fa;color:#292b35}
+.theme-dark .piano-key span{color:#555}
+.theme-light{background:var(--paper);color:var(--ink)}
+@media(max-width:700px){.theme-dark .mobile-bottom-nav{background:#191d29;border-color:#303647}.theme-dark .mobile-bottom-nav button{color:#aeb4c4}.theme-dark .mobile-bottom-nav button.mobile-nav-active{color:#c3bdff}}
