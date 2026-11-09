@@ -141,3 +141,11 @@
 .theme-dark .drum-pad-grid button{background:#242a3a;border-color:#3b4358;color:#e3e5ee}
 .theme-dark .drum-pad-grid button:active{background:#37345a;border-color:#8d86fa}
 @media(max-width:700px){.drum-pad-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.drum-pad-grid span{font-size:7px}}
+
+.piano-wrap{overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:8px}
+.piano-keys{min-width:760px;grid-template-columns:repeat(21,minmax(28px,1fr));height:170px;position:relative}
+.piano-key{min-width:28px}
+.black-keys{pointer-events:none}
+.black-keys button{pointer-events:auto;width:2.55%;height:60%;top:0}
+.theme-dark .piano-key{background:#f9f9fb;color:#252733}
+.theme-dark .piano-key span{color:#4e5260}
