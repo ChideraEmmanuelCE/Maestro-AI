@@ -138,7 +138,20 @@ function Metronome({bpm}:{bpm:number}){const [beat,setBeat]=useState(0);useEffec
 .lesson-practice-keys>div button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
 @media(max-width:700px){.backing-track-panel{padding:17px}.backing-track-controls>*{flex:1}.track-mutes{gap:6px}.track-mutes button{padding:8px 10px}}
 
-.composition-generator{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:23px}
+/* Audio studio and lesson mastery states */
+.backing-track-panel,.composition-generator{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:23px}
+.backing-track-controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.track-mutes{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+.track-mutes>span{font-size:9px;font-weight:800;letter-spacing:1.2px;color:#898b93;margin-right:5px}
+.track-mutes button{border:1px solid #e6e3dd;border-radius:30px;background:#f7f5f1;color:#494b55;padding:8px 13px;font-size:10px;font-weight:700;text-transform:capitalize}
+.track-mutes button.track-muted{background:#272442;color:#aaa8c2;border-color:#272442;text-decoration:line-through}
+.mastery-check{margin-top:18px}
+.mastery-check>div{flex-wrap:wrap}
+.mastery-check button.answer-correct{border-color:#3e9871;background:#e9f7ef;color:#236b4c}
+.mastery-check button.answer-wrong{border-color:#c96d6d;background:#fff0f0;color:#9e3e3e}
+.answer-feedback{font-size:11px;line-height:1.6;margin:10px 0 0;color:#9e3e3e}
+.answer-feedback.correct{color:#236b4c}
+.lesson-practice-keys>div button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
 .composition-prompt-label{display:grid;gap:8px;margin-top:17px;font-size:11px;font-weight:800;color:#555763}
 .composition-prompt-label textarea{width:100%;resize:vertical;border:1px solid #e5e2dc;border-radius:12px;padding:13px 14px;color:var(--ink);background:#fbfaf8;font-size:12px;line-height:1.6}
 .generated-piece-label{display:flex;align-items:center;gap:7px;margin:13px 0 0;color:#327b5d;font-size:10px;font-weight:700}
@@ -150,4 +163,4 @@ function Metronome({bpm}:{bpm:number}){const [beat,setBeat]=useState(0);useEffec
 .saved-piece-row>span{width:30px;height:30px;border-radius:9px;background:#eeedff;color:var(--brand);display:grid;place-items:center}
 .saved-piece-row>b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
 .saved-piece-row button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;color:#5147d9;font-size:9px;font-weight:800}
-@media(max-width:700px){.composition-generator{padding:17px}.composition-generator .backing-track-controls>*{flex:1}}
+@media(max-width:700px){.backing-track-panel,.composition-generator{padding:17px}.backing-track-controls>*{flex:1}.track-mutes{gap:6px}.track-mutes button{padding:8px 10px}}
