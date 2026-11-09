@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       ? "The learner is aged 0–3. Address the parent or guardian, not the toddler. Suggest only short, gentle, supervised, age-appropriate sound play. Avoid small detachable objects, loud sounds, or activities requiring fine motor precision."
       : "The learner is aged 4 or older. Adapt vocabulary and activity complexity to the question; keep explanations accessible and encouraging.";
 
-    const upstream = await fetch("https://router.huggingface.co/v1/chat/completions",
+    const upstream = await fetch("https://router.huggingface.co/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
