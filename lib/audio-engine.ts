@@ -40,7 +40,8 @@ export async function initialiseAudio() {
       }).toDestination();
       clickSynth = new Tone.MembraneSynth({pitchDecay:0.008,octaves:5,envelope:{attack:0.001,decay:0.07,sustain:0,release:0.04}}).toDestination();
       snareSynth = new Tone.NoiseSynth({noise:{type:"white"},envelope:{attack:0.001,decay:0.13,sustain:0,release:0.02}}).toDestination();
-      hatSynth = new Tone.MetalSynth({frequency:280,envelope:{attack:0.001,decay:0.06,release:0.01},harmonicity:5.1,modulationIndex:24,resonance:3200,octaves:1.5}).toDestination();
+      hatSynth = new Tone.MetalSynth({envelope:{attack:0.001,decay:0.06,release:0.01},harmonicity:5.1,modulationIndex:24,resonance:3200,octaves:1.5}).toDestination();
+      hatSynth.frequency.value = 280;
       try { await Tone.loaded(); } catch { /* use the local synth fallback if samples cannot load */ }
     })();
   }
