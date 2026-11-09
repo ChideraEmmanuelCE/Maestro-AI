@@ -1,38 +1,59 @@
 # Maestro AI
 
-Maestro AI is a music-learning application with two age-adapted experiences: a parent-managed early-years interface for ages 0–3, and a structured learning workspace for learners aged 4 and above.
+Maestro AI is being rebuilt as an age-adaptive music education studio: structured learning, audible examples, instrument practice, composition, and a private AI tutor.
 
-## Features
+## Current implementation
 
-- Local learner profile creation and sign-in on the same browser/device.
-- Separate large-touch early-years interface and standard learning workspace.
-- Guided music lessons for listening, rhythm, piano, voice, guitar and creativity.
-- Interactive Web Audio piano keyboard and audible metronome.
-- AI music tutor powered by GPT-OSS 20B (openai/gpt-oss-20b) through Hugging Face Inference Providers.
-- Local progress history for completed lessons and notes explored.
-- Responsive desktop and mobile navigation.
+- 20 structured lessons spanning listening, piano, notation, rhythm, scales, ear training, chords, harmony, guitar and composition.
+- Lesson objectives, concept explanations, listening prompts, practical activities and scored mastery questions.
+- Sample-based piano playback using the Salamander soundfont, with a local synthesizer fallback.
+- Generated four-bar C-major arrangement with melody, harmony, bass and percussion tracks.
+- Tempo control, track muting, arrangement playback and MIDI export.
+- Supabase SQL schema for guardian accounts, multiple learner profiles, lesson mastery, practice sessions, generated pieces and weekly goals.
+- Row-level security policies scope learner records to their guardian.
 
-## Important account limitation
+## Technology
 
-The current profile system uses browser localStorage as a temporary, device-local profile. It is not secure server-side authentication, does not verify email, and does not sync across browsers or devices. Do not store sensitive information. A production release should add a real authentication provider and database-backed learner profiles, guardian consent and account recovery.
+- Next.js 15 App Router, React 19 and TypeScript
+- Tone.js + Web Audio API
+- Salamander piano samples (loaded from Tone.js public sample hosting)
+- `@tonejs/midi` for MIDI export
+- Supabase Auth, Postgres and Storage (schema and dependencies included; project credentials and live auth wiring remain required)
+- Vercel deployment
 
-## AI tutor setup
+## Setup
 
-1. Create a free Groq API key at https://console.groq.com/keys.
-2. Add it to Vercel as the encrypted Production environment variable `GROQ_API_KEY`.
-3. Redeploy after changing the environment variable. The app uses the open-weight GPT-OSS 20B model on Groq's free, rate-limited developer tier.
+1. Install dependencies:
 
-An optional `HF_TOKEN` fallback is supported, but Hugging Face Inference Providers may require prepaid credits.
+   ```bash
+   npm install
+   ```
 
-The server calls the Hugging Face OpenAI-compatible chat-completions endpoint. The token is never sent to the browser. Chat is text-only: the tutor does not claim to listen to microphone recordings.
+2. Copy `.env.example` to `.env.local` and fill in the Supabase and AI provider values.
 
-Hugging Face Inference Providers may use account credits and/or usage-based billing.
+3. In the Supabase SQL editor, run:
 
-## Local development
+   `supabase/migrations/001_initial_schema.sql`
 
-```bash
-npm install
-npm run dev
-```
+4. Start the app:
 
-Copy `.env.example` to `.env.local` and set `HF_TOKEN` for local AI chat.
+   ```bash
+   npm run dev
+   ```
+
+## Environment variables
+
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase publishable/anon key
+- `GROQ_API_KEY`: optional server-side AI tutor provider key
+- `HF_TOKEN`: optional Hugging Face fallback
+
+Never expose service-role keys or model-provider secrets in browser code.
+
+## Important release status
+
+This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project, and the current profile screen still uses device-local storage until the authentication and profile-sync migration is completed. Voice pitch analysis, microphone performance assessment, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
+
+## Audio notes
+
+The piano sampler fetches Salamander samples on first use. If the sample host is unavailable, the audio engine falls back to a local Tone.js synthesizer. The current procedural arrangement can be played immediately after the first user gesture and exported as MIDI.
