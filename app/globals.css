@@ -137,3 +137,17 @@ function Metronome({bpm}:{bpm:number}){const [beat,setBeat]=useState(0);useEffec
 .answer-feedback.correct{color:#236b4c}
 .lesson-practice-keys>div button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
 @media(max-width:700px){.backing-track-panel{padding:17px}.backing-track-controls>*{flex:1}.track-mutes{gap:6px}.track-mutes button{padding:8px 10px}}
+
+.composition-generator{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:23px}
+.composition-prompt-label{display:grid;gap:8px;margin-top:17px;font-size:11px;font-weight:800;color:#555763}
+.composition-prompt-label textarea{width:100%;resize:vertical;border:1px solid #e5e2dc;border-radius:12px;padding:13px 14px;color:var(--ink);background:#fbfaf8;font-size:12px;line-height:1.6}
+.generated-piece-label{display:flex;align-items:center;gap:7px;margin:13px 0 0;color:#327b5d;font-size:10px;font-weight:700}
+.saved-library{border-top:1px solid var(--line);margin-top:19px;padding-top:15px}
+.saved-library-heading{display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.saved-library-heading b{font-family:Manrope;font-size:13px}
+.saved-library-heading span,.saved-library>p{font-size:10px;color:#8b8d95}
+.saved-piece-row{display:flex;align-items:center;gap:9px;border-bottom:1px solid #f0eeea;padding:10px 0}
+.saved-piece-row>span{width:30px;height:30px;border-radius:9px;background:#eeedff;color:var(--brand);display:grid;place-items:center}
+.saved-piece-row>b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.saved-piece-row button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;color:#5147d9;font-size:9px;font-weight:800}
+@media(max-width:700px){.composition-generator{padding:17px}.composition-generator .backing-track-controls>*{flex:1}}
