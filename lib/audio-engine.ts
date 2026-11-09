@@ -109,6 +109,27 @@ export async function playArrangement(arrangement: Arrangement) {
   Tone.Transport.scheduleOnce(() => stopArrangement(), arrangement.bars * arrangement.beatsPerBar * secondsPerBeat + 0.2);
 }
 
+export async function playLessonExample(kind: "scale" | "chord" | "rhythm" | "interval" | "progression" | "melody", rootMidi: number, bpm: number) {
+  const events: NoteEvent[] = [];
+  if (kind === "scale") {
+    [0,2,4,5,7,9,11,12,11,9,7,5,4,2,0].forEach((step,i) => events.push({track:"melody",midi:rootMidi+step,beat:i*0.5,beats:0.45,velocity:0.72}));
+  } else if (kind === "chord") {
+    const chord=[rootMidi,rootMidi+4,rootMidi+7];
+    chord.forEach((midi,i)=>events.push({track:"melody",midi,beat:i*0.5,beats:0.45,velocity:0.72}));
+    chord.forEach(midi=>events.push({track:"harmony",midi,beat:2,beats:2.8,velocity:0.6}));
+  } else if (kind === "interval") {
+    [rootMidi,rootMidi+4,rootMidi,rootMidi+7,rootMidi,rootMidi+12].forEach((midi,i)=>events.push({track:"melody",midi,beat:i*1.5,beats:1.25,velocity:0.78}));
+  } else if (kind === "progression") {
+    [[0,4,7],[5,9,12],[7,11,14],[0,4,7]].forEach((chord,bar)=>chord.forEach(midi=>events.push({track:"harmony",midi:rootMidi+midi,beat:bar*4,beats:3.7,velocity:0.56})));
+    [0,5,7,0].forEach((root,bar)=>events.push({track:"bass",midi:rootMidi+root-12,beat:bar*4,beats:3.8,velocity:0.65}));
+  } else if (kind === "rhythm") {
+    for(let beat=0;beat<16;beat++) events.push({track:"drums",midi:beat%4===0?60:55,beat,beats:0.12,velocity:beat%4===0?0.82:0.48});
+  } else {
+    [0,2,4,7,4,2,0,7,9,7,4,2,0].forEach((step,i)=>events.push({track:"melody",midi:rootMidi+step,beat:i*0.5,beats:0.46,velocity:0.7}));
+    [[0,4,7],[5,9,12]].forEach((chord,bar)=>chord.forEach(midi=>events.push({track:"harmony",midi:rootMidi+midi,beat:bar*4,beats:3.8,velocity:0.38})));
+  }
+  await playArrangement({title:"Lesson "+kind+" example",bpm,beatsPerBar:4,bars:kind==="interval"?3:4,events});
+}
 export function makeCmajorStudy(bpm = 84): Arrangement {
   const melody = [60,62,64,65,67,69,71,72,71,69,67,65,64,62,60];
   const events: NoteEvent[] = melody.map((midi, i) => ({
