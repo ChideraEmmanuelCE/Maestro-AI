@@ -8,7 +8,7 @@ Maestro AI is a music-learning application with two age-adapted experiences: a p
 - Separate large-touch early-years interface and standard learning workspace.
 - Guided music lessons for listening, rhythm, piano, voice, guitar and creativity.
 - Interactive Web Audio piano keyboard and audible metronome.
-- AI music tutor powered by Gemma 2 2B IT (google/gemma-2-2b-it) through Hugging Face Inference Providers.
+- AI music tutor powered by GPT-OSS 20B (openai/gpt-oss-20b) through Hugging Face Inference Providers.
 - Local progress history for completed lessons and notes explored.
 - Responsive desktop and mobile navigation.
 
