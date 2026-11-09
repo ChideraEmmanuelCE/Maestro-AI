@@ -118,3 +118,16 @@
 .theme-dark .pitch-readout strong{color:#c0baff}
 
 .auth-notice{margin:0;padding:12px 13px;border:1px solid #c9e4d6;border-radius:11px;background:#effaf3;color:#236b4c;font-size:11px;line-height:1.6}
+
+.family-panel>p{font-size:11px;line-height:1.6;color:#858994;margin:0 0 12px}
+.family-panel .setting-row{gap:12px}
+.family-panel .setting-row>span{display:grid;gap:4px}
+.family-panel .setting-row small{font-size:9px;color:#8c909b}
+.family-panel .setting-row button{padding:7px 11px;font-size:10px}
+.family-add-form{display:grid;grid-template-columns:1fr 150px auto;align-items:end;gap:10px;margin-top:17px;padding-top:16px;border-top:1px solid var(--line)}
+.family-add-form label{display:grid;gap:7px;font-size:10px;font-weight:800;color:#696d79}
+.family-add-form input,.family-add-form select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--paper);color:var(--ink);font:inherit;font-size:11px}
+.family-add-form .primary-button{white-space:nowrap;padding:10px 13px;font-size:10px}
+.theme-dark .family-panel>p,.theme-dark .family-add-form label{color:#a5aaba}
+.theme-dark .family-add-form input,.theme-dark .family-add-form select{background:#131722;border-color:#343a4c;color:#f1f2f7}
+@media(max-width:700px){.family-add-form{grid-template-columns:1fr}.family-add-form .primary-button{width:100%}}
