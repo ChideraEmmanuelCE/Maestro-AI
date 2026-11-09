@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
 import { playFrequency, playFrequencyChord, playClick as playAudioClick, playLessonExample, makeCmajorStudy, generateProceduralComposition, playArrangement, stopArrangement, exportArrangementMidi, setMutedTracks, playDrumPad, playMidiNote, playMidiChord, type TrackName, type Arrangement } from "@/lib/audio-engine";
 import { curriculum } from "@/lib/curriculum";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
@@ -230,7 +230,7 @@ function GuitarFretboard(){
   const [selected,setSelected]=useState("C");
   const shape=chords[selected];
   const noteNames=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
-  return <div className="guitar-fretboard"><div className="guitar-chord-picker">{Object.keys(chords).map(name=><button key={name} className={selected===name?"selected":""} onClick={()=>{setSelected(name);void playMidiChord(shape.map((fret,index)=>fret>=0?strings[index].midi+fret:null).filter((note):note is number=>note!==null));}}>{name}</button>)}</div><div className="fretboard-grid"><span className="fretboard-corner">STRING</span>{[0,1,2,3,4,5].map(fret=><span className="fret-number" key={fret}>{fret===0?"OPEN":fret}</span>)}{strings.map((string,index)=><React.Fragment key={string.name}><b className="string-label">{string.name}</b>{[0,1,2,3,4,5].map(fret=>{const active=shape[index]===fret;return <button key={fret} className={active?"fret-cell active":"fret-cell"} onClick={()=>void playMidiNote(string.midi+fret)} aria-label={string.name+" fret "+fret}><i/></button>;})}</React.Fragment>)}</div><p className="fretboard-help">Standard tuning · Low E to high E · Frets 0–5</p></div>;
+  return <div className="guitar-fretboard"><div className="guitar-chord-picker">{Object.keys(chords).map(name=><button key={name} className={selected===name?"selected":""} onClick={()=>{setSelected(name);void playMidiChord(chords[name].map((fret,index)=>fret>=0?strings[index].midi+fret:null).filter((note):note is number=>note!==null));}}>{name}</button>)}</div><div className="fretboard-grid"><span className="fretboard-corner">STRING</span>{[0,1,2,3,4,5].map(fret=><span className="fret-number" key={fret}>{fret===0?"OPEN":fret}</span>)}{strings.map((string,index)=><Fragment key={string.name}><b className="string-label">{string.name}</b>{[0,1,2,3,4,5].map(fret=>{const active=shape[index]===fret;return <button key={fret} className={active?"fret-cell active":"fret-cell"} onClick={()=>void playMidiNote(string.midi+fret)} aria-label={string.name+" fret "+fret}><i/></button>;})}</Fragment>)}</div><p className="fretboard-help">Standard tuning · Low E to high E · Frets 0–5</p></div>;
 }
 
 function DrumPad(){
