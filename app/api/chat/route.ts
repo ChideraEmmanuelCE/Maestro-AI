@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     const messages = body.messages.map((message: { role?: string; content?: string }) => {
       if (!["user", "assistant"].includes(message.role || "") || typeof message.content !== "string") {
-        throw new Error("Invalid message format.");
+        return NextResponse.json({ error: "One of the chat messages is invalid." }, { status: 400 });
       }
       return { role: message.role, content: message.content.slice(0, 2500) };
     });
