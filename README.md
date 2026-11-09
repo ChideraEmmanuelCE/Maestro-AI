@@ -1,22 +1,31 @@
 # Maestro AI
 
-An approachable music-learning workspace with an AI tutor, guided learning paths and a practice studio.
+Maestro AI is a music-learning application with two age-adapted experiences: a parent-managed early-years interface for ages 0–3, and a structured learning workspace for learners aged 4 and above.
 
-## AI tutor
+## Features
 
-Maestro uses the open-weight **Qwen2.5-7B-Instruct-1M** model through Hugging Face Inference Providers. The model is hosted remotely; the Hugging Face token is kept server-side and is never sent to the browser.
+- Local learner profile creation and sign-in on the same browser/device.
+- Separate large-touch early-years interface and standard learning workspace.
+- Guided music lessons for listening, rhythm, piano, voice, guitar and creativity.
+- Interactive Web Audio piano keyboard and audible metronome.
+- AI music tutor powered by Qwen2.5-7B-Instruct-1M through Hugging Face Inference Providers.
+- Local progress history for completed lessons and notes explored.
+- Responsive desktop and mobile navigation.
 
-### Configure the model
+## Important account limitation
 
-1. Create a Hugging Face account and generate a fine-grained token at https://huggingface.co/settings/tokens.
-2. Enable **Make calls to Inference Providers** for that token.
-3. In Vercel, open the `maestro-ai` project → Settings → Environment Variables.
-4. Add `HF_TOKEN` as an encrypted variable for Production (and Preview/Development if desired).
-5. Redeploy.
+The current profile system uses browser localStorage as a temporary, device-local profile. It is not secure server-side authentication, does not verify email, and does not sync across browsers or devices. Do not store sensitive information. A production release should add a real authentication provider and database-backed learner profiles, guardian consent and account recovery.
 
-For local development, copy `.env.example` to `.env.local` and set `HF_TOKEN`.
+## AI tutor setup
 
-Hugging Face Inference Providers use usage-based billing and account credits may apply. Open model weights do not mean hosted inference is always free.
+1. Create a fine-grained Hugging Face token at https://huggingface.co/settings/tokens.
+2. Enable **Make calls to Inference Providers**.
+3. Add it to Vercel as the encrypted Production environment variable `HF_TOKEN`.
+4. Redeploy after changing the environment variable.
+
+The server calls the Hugging Face OpenAI-compatible chat-completions endpoint. The token is never sent to the browser. Chat is text-only: the tutor does not claim to listen to microphone recordings.
+
+Hugging Face Inference Providers may use account credits and/or usage-based billing.
 
 ## Local development
 
@@ -24,3 +33,5 @@ Hugging Face Inference Providers use usage-based billing and account credits may
 npm install
 npm run dev
 ```
+
+Copy `.env.example` to `.env.local` and set `HF_TOKEN` for local AI chat.
