@@ -127,7 +127,7 @@ export default function Page(){
     if(!name.trim()||!email.includes("@")||!learnerName.trim()){setError("Please complete each field with a valid email address.");return;}
     const supabase=createSupabaseClient();
     if(!supabase){setError("Cloud accounts are not configured yet. Add the Supabase project URL and publishable key to Vercel.");return;}
-    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{emailRedirectTo:window.location.origin+"/auth/callback",data:{display_name:name.trim(),learner_name:learnerName.trim(),age_band:ageBand}}});
+    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{emailRedirectTo:"https://maestro-ai-flame.vercel.app/auth/callback",data:{display_name:name.trim(),learner_name:learnerName.trim(),age_band:ageBand}}});
     if(error){setError(error.message);return;}
     setNotice("We sent a secure sign-in link to "+email.trim()+". Open it on this device to finish creating the learner profile.");
   }
@@ -135,7 +135,7 @@ export default function Page(){
     e.preventDefault();setError("");setNotice("");
     const supabase=createSupabaseClient();
     if(!supabase){setError("Cloud sign-in is not configured. Set the Supabase project URL and publishable key in Vercel.");return;}
-    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{emailRedirectTo:window.location.origin+"/auth/callback"}});
+    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{emailRedirectTo:"https://maestro-ai-flame.vercel.app/auth/callback"}});
     if(error){setError(error.message);return;}
     setNotice("A secure sign-in link has been sent to "+email.trim()+".");
   }
