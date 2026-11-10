@@ -108,7 +108,7 @@ export default function Page(){
                 if(alive)setError("Your email is verified, but learner profiles could not be loaded: "+profilesError.message+". Check the Supabase database migration.");
               }else{
                 if(!profiles?.length){
-                  const {data:created,error:createError}=await supabase.from("learner_profiles").insert({guardian_user_id:user.id,display_name:learnerName,age_band}).select("id,display_name,age_band").single();
+                  const {data:created,error:createError}=await supabase.from("learner_profiles").insert({guardian_user_id:user.id,display_name:learnerName,age_band:ageBand}).select("id,display_name,age_band").single();
                   if(createError||!created){
                     console.error("Maestro learner profile create error:",createError?.message);
                     if(alive)setError("Your email is verified, but learner profile creation failed: "+(createError?.message||"No profile returned")+". Check the Supabase database migration.");
