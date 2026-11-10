@@ -90,18 +90,41 @@ export default function Page(){
         const pieces=JSON.parse(localStorage.getItem("maestro.library.v1")||"[]");if(Array.isArray(pieces))setSavedPieces(pieces);
         const supabase=createSupabaseClient();
         if(supabase){
-          const {data:{user}}=await supabase.auth.getUser();
+          const {data:{user},error:userError}=await supabase.auth.getUser();
+          if(userError) console.error("Maestro session restore failed:",userError.message);
           if(user){
-            const {data:profiles}=await supabase.from("learner_profiles").select("id,display_name,age_band").eq("guardian_user_id",user.id).order("created_at",{ascending:true});
-            if(profiles?.length){
-              if(alive)setLearnerProfiles(profiles as LearnerProfile[]);
-              const profile=profiles[0];
-              if(alive)setAccount({id:profile.id,guardianId:user.id,name:String(user.user_metadata?.display_name||user.email||"Guardian"),email:user.email||"",learnerName:profile.display_name,ageBand:profile.age_band,createdAt:user.created_at});
-              const {data:rows}=await supabase.from("lesson_progress").select("lesson_id,status,mastered_at").eq("learner_id",profile.id);
-              if(alive&&rows){setProgress(prev=>({...prev,completed:rows.filter(row=>row.status==="mastered").map(row=>row.lesson_id)}));setWeeklyMinutes(rows.filter(row=>row.status==="mastered"&&row.mastered_at&&new Date(row.mastered_at)>=new Date(weekStartDate())).reduce((sum,row)=>sum+(Number(lessons.find(item=>item.id===row.lesson_id)?.duration.match(/\d+/)?.[0])||0),0));}
-              const {data:goal}=await supabase.from("weekly_goals").select("target_minutes").eq("learner_id",profile.id).eq("week_start",weekStartDate()).maybeSingle();if(alive&&goal)setWeeklyGoalMinutes(goal.target_minutes);
-              const {data:pieces}=await supabase.from("generated_pieces").select("title,created_at,arrangement").eq("learner_id",profile.id).order("created_at",{ascending:false}).limit(30);
-              if(alive&&pieces)setSavedPieces(pieces.map(piece=>({title:piece.title,createdAt:piece.created_at,arrangement:piece.arrangement as Arrangement})));
+            const displayName=String(user.user_metadata?.display_name||user.email||"Guardian");
+            const learnerName=String(user.user_metadata?.learner_name||displayName);
+            const allowedAgeBands=["4-8","9-16","adult"];
+            const ageBand=allowedAgeBands.includes(user.user_metadata?.age_band)?user.user_metadata.age_band:"adult";
+            const {error:guardianError}=await supabase.from("guardian_accounts").upsert({user_id:user.id,display_name:displayName},{onConflict:"user_id"});
+            if(guardianError){
+              console.error("Maestro guardian record error:",guardianError.message);
+              if(alive)setError("Your email is verified, but your account profile could not be saved: "+guardianError.message+". Run the Maestro database migration in Supabase.");
+            }else{
+              let {data:profiles,error:profilesError}=await supabase.from("learner_profiles").select("id,display_name,age_band").eq("guardian_user_id",user.id).order("created_at",{ascending:true});
+              if(profilesError){
+                console.error("Maestro learner profiles error:",profilesError.message);
+                if(alive)setError("Your email is verified, but learner profiles could not be loaded: "+profilesError.message+". Check the Supabase database migration.");
+              }else{
+                if(!profiles?.length){
+                  const {data:created,error:createError}=await supabase.from("learner_profiles").insert({guardian_user_id:user.id,display_name:learnerName,age_band}).select("id,display_name,age_band").single();
+                  if(createError||!created){
+                    console.error("Maestro learner profile create error:",createError?.message);
+                    if(alive)setError("Your email is verified, but learner profile creation failed: "+(createError?.message||"No profile returned")+". Check the Supabase database migration.");
+                  }else profiles=[created];
+                }
+                if(profiles?.length){
+                  const list=profiles as LearnerProfile[];const profile=list[0];
+                  if(alive){setLearnerProfiles(list);setAccount({id:profile.id,guardianId:user.id,name:displayName,email:user.email||"",learnerName:profile.display_name,ageBand:profile.age_band,createdAt:user.created_at});}
+                  const {data:rows,error:progressError}=await supabase.from("lesson_progress").select("lesson_id,status,mastered_at").eq("learner_id",profile.id);
+                  if(progressError)console.error("Maestro progress restore error:",progressError.message);
+                  if(alive&&rows){setProgress(prev=>({...prev,completed:rows.filter(row=>row.status==="mastered").map(row=>row.lesson_id)}));setWeeklyMinutes(rows.filter(row=>row.status==="mastered"&&row.mastered_at&&new Date(row.mastered_at)>=new Date(weekStartDate())).reduce((sum,row)=>sum+(Number(lessons.find(item=>item.id===row.lesson_id)?.duration.match(/\\d+/)?.[0])||0),0));}
+                  const {data:goal}=await supabase.from("weekly_goals").select("target_minutes").eq("learner_id",profile.id).eq("week_start",weekStartDate()).maybeSingle();if(alive&&goal)setWeeklyGoalMinutes(goal.target_minutes);
+                  const {data:pieces}=await supabase.from("generated_pieces").select("title,created_at,arrangement").eq("learner_id",profile.id).order("created_at",{ascending:false}).limit(30);
+                  if(alive&&pieces)setSavedPieces(pieces.map(piece=>({title:piece.title,createdAt:piece.created_at,arrangement:piece.arrangement as Arrangement})));
+                }
+              }
             }
           }
         }else{
@@ -127,7 +150,7 @@ export default function Page(){
     if(!name.trim()||!email.includes("@")||!learnerName.trim()){setError("Please complete each field with a valid email address.");return;}
     const supabase=createSupabaseClient();
     if(!supabase){setError("Cloud accounts are not configured yet. Add the Supabase project URL and publishable key to Vercel.");return;}
-    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:true,emailRedirectTo:"https://maestro-ai-flame.vercel.app/auth/callback",data:{display_name:name.trim(),learner_name:learnerName.trim(),age_band:ageBand}}});
+    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:true,emailRedirectTo:"https://maestro-ai-flame.vercel.app/",data:{display_name:name.trim(),learner_name:learnerName.trim(),age_band:ageBand}}});
     if(error){setError(error.message);return;}
     setNotice("We sent a secure sign-in link to "+email.trim()+". Open it on this device to finish creating the learner profile.");
   }
@@ -135,7 +158,7 @@ export default function Page(){
     e.preventDefault();setError("");setNotice("");
     const supabase=createSupabaseClient();
     if(!supabase){setError("Cloud sign-in is not configured. Set the Supabase project URL and publishable key in Vercel.");return;}
-    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:"https://maestro-ai-flame.vercel.app/auth/callback"}});
+    const {error}=await supabase.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:"https://maestro-ai-flame.vercel.app/"}});
     if(error){setError(error.message);return;}
     setNotice("A secure sign-in link has been sent to "+email.trim()+".");
   }
