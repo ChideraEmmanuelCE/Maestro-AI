@@ -177,7 +177,7 @@ export default function Page(){
   async function resendEmailCode(){
     setError("");setNotice("");const supabase=createSupabaseClient();if(!supabase)return;
     setAuthBusy(true);
-    const {error}=await supabase.auth.signInWithOtp({email:authEmail,options:{shouldCreateUser:!register}});
+    const {error}=await supabase.auth.signInWithOtp({email:authEmail,options:{shouldCreateUser:register}});
     setAuthBusy(false);
     if(error)setError(error.message);else setNotice("A fresh one-time code has been sent to "+authEmail+".");
   }
