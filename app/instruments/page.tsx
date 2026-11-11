@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Search, Volume2, Music2, Piano, Guitar, Drum, Wind, Waves, Play, Square, Hand, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Search, Volume2, Music2, Gamepad2, Piano, Guitar, Drum, Wind, Waves, Play, Square, Hand, SlidersHorizontal } from "lucide-react";
 
 type Family = "Keyboard" | "Strings" | "Brass" | "Woodwinds" | "Percussion" | "World";
 export type Item = { id:string; name:string; family:Family; soundfont:string; technique:string; range:[number,number]; icon:string };
@@ -146,7 +146,7 @@ export default function InstrumentsPage(){
  function pedal(on:boolean){setSustain(on);const p=players.current[current.id];p?.setCC?.(64,on?127:0);}
  const fretNotes=[40,45,50,55,59,64];
  return <main className="instrument-studio">
- <header className="studio-header"><button onClick={()=>router.push("/")}><ArrowLeft size={17}/> Back to Maestro</button><span>MAESTRO AI · INSTRUMENT LIBRARY</span></header>
+ <header className="studio-header"><button onClick={()=>router.push("/")}><ArrowLeft size={17}/> Back to Maestro</button><button onClick={()=>router.push("/instruments/game")}><Gamepad2 size={15}/> 3D Play Room</button></header>
  <section className="studio-intro"><span>EXPLORE · PLAY · LEARN</span><h1>Meet the sound<br/><em>of music.</em></h1><p>Explore a growing collection of sampled instruments. Learn how each family is played, hear its real sampled tone and practise notes, chords and rhythms.</p><div className="library-stats"><b>{ITEMS.length} instruments</b><span>6 instrument families</span><span>Sample-based audio</span></div></section>
  <section className="library-layout">
   <aside className="library-sidebar"><div className="library-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find an instrument..."/></div><div className="family-list">{FAMILIES.map(f=><button key={f} className={family===f?"chosen":""} onClick={()=>setFamily(f)}>{f}<span>{f==="All"?ITEMS.length:ITEMS.filter(x=>x.family===f).length}</span></button>)}</div></aside>
