@@ -127,7 +127,8 @@ export default function InstrumentsPage(){
     setMessage(current.name+" · "+midiToName(midi)+" · velocity "+velocity);
    }catch(e){setMessage("Could not load this sound. Check your connection and tap again.");}
  }
- async function playPad(note:number){await playNote(note);}\n async function playDrum(note:string){try{const p=await getPlayer(current);p.start({note,velocity});setMessage("Drum hit · "+note);}catch{setMessage("Could not load the drum samples. Tap again.");}}
+ async function playPad(note:number){await playNote(note);}
+ async function playDrum(note:string){try{const p=await getPlayer(current);p.start({note,velocity});setMessage("Drum hit · "+note);}catch{setMessage("Could not load the drum samples. Tap again.");}}
  async function changeInstrument(item:Item){
    setSelected(item.id);setMessage("Selected "+item.name+". Tap a note to load its recorded sound.");setLoaded(Boolean(players.current[item.id]));
    if(item.family==="Strings" && /guitar|bass|banjo|sitar|shamisen|koto/.test(item.name.toLowerCase()))setMode("fretboard");
