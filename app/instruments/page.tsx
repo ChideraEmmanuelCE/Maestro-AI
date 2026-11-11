@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Search, Volume2, Music2, Piano, Guitar, Drum, Wind, Waves, Play, Square, Hand, SlidersHorizontal } from "lucide-react";
 
 type Family = "Keyboard" | "Strings" | "Brass" | "Woodwinds" | "Percussion" | "World";
-type Item = { id:string; name:string; family:Family; soundfont:string; technique:string; range:[number,number]; icon:string };
-const ITEMS:Item[] = [
+export type Item = { id:string; name:string; family:Family; soundfont:string; technique:string; range:[number,number]; icon:string };
+export const ITEMS:Item[] = [
 {id:"grand",name:"Grand piano",family:"Keyboard",soundfont:"acoustic_grand_piano",technique:"Strike keys with different force; use sustain to connect notes.",range:[21,108],icon:"🎹"},
 {id:"bright",name:"Bright piano",family:"Keyboard",soundfont:"bright_acoustic_piano",technique:"A brighter, more cutting acoustic piano tone.",range:[36,96],icon:"🎹"},
 {id:"electric",name:"Electric piano",family:"Keyboard",soundfont:"electric_piano_1",technique:"Play softly for mellow tones and harder for a brighter attack.",range:[28,96],icon:"🎹"},
