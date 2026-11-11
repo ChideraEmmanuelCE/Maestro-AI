@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, Float, OrbitControls, Text } from "@react-three/drei";
 import { ArrowLeft, AudioLines, Gamepad2, Music2, Pause, Play, Search, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ITEMS, type Item } from "../page";
+import { ITEMS, type Item } from "../catalogue";
 
 type Player = { output?:{volume:number}; start:(o:{note:number|string;velocity?:number;duration?:number;time?:number})=>unknown; setCC?:(cc:number,value:number)=>void };
 const DRUMS=["kick","snare","closed-hi-hat","open-hi-hat","low-tom","mid-tom","high-tom","crash","ride","clap"];
