@@ -16,7 +16,7 @@ const CHORDS:Record<string,number[]> = {
 export default function InstrumentsPage(){
   const router=useRouter();
   const [instrument,setInstrument]=useState<Instrument>("piano");
-  const [octave,setOctave]=useState(4);
+  const [octave,setOctave]=useState(3);
   const [held,setHeld]=useState<number[]>([]);
   const [chord,setChord]=useState("C");
   const [bpm,setBpm]=useState(100);
@@ -26,7 +26,7 @@ export default function InstrumentsPage(){
   const bassRef=useRef<Tone.MonoSynth|null>(null);
   const stringsRef=useRef<Tone.PolySynth|null>(null);
   const drumRef=useRef<Tone.MembraneSynth|null>(null);
-  const pianoNotes=useMemo(()=>Array.from({length:29},(_,i)=>48+i),[]);
+  const pianoNotes=useMemo(()=>Array.from({length:25},(_,i)=>(octave+1)*12+i),[octave]);
   const blackSet=new Set([1,3,6,8,10]);
   const white=pianoNotes.filter(n=>!blackSet.has(n%12));
   const black=pianoNotes.filter(n=>blackSet.has(n%12)).map(n=>({n,left:((white.filter(w=>w<n).length-.32)/white.length*100)+"%"}));
@@ -75,7 +75,7 @@ export default function InstrumentsPage(){
     <section className="instrument-picker">{instruments.map(([id,label,desc,Icon])=><button key={id} className={instrument===id?"instrument-choice active":"instrument-choice"} onClick={()=>{setInstrument(id);setMessage(label+" selected. Play to begin.");}}><Icon size={22}/><b>{label}</b><small>{desc}</small></button>)}</section>
     <section className="instrument-workbench">
       <div className="workbench-heading"><div><span>NOW PLAYING</span><h2>{instruments.find(x=>x[0]===instrument)?.[1]}</h2><p>{message}</p></div><span className="audio-status"><i/> Audio ready after first tap</span></div>
-      {instrument==="piano"&&<><div className="octave-control"><button onClick={()=>setOctave(v=>Math.max(2,v-1))}>−</button><b>Keyboard range · C{Math.floor(octave)} to C{Math.floor(octave)+2}</b><button onClick={()=>setOctave(v=>Math.min(6,v+1))}>+</button></div><div className="studio-keyboard"><div className="studio-white-keys">{pianoNotes.map((n,i)=><button key={n} onPointerDown={()=>void play(n)} className={held.includes(n)?"pressed":""} aria-label={"Play "+midiName(n)}><span>{midiName(n)}</span></button>)}</div><div className="studio-black-keys">{black.map(({n,left})=><button key={n} style={{left}} onPointerDown={()=>void play(n)} aria-label={"Play "+midiName(n)}><span>{midiName(n)}</span></button>)}</div></div><p className="instrument-hint">The piano uses sampled grand-piano recordings. Tap any white or black key.</p></>}
+      {instrument==="piano"&&<><div className="octave-control"><button onClick={()=>setOctave(v=>Math.max(2,v-1))}>−</button><b>Keyboard range · C{octave} to C{octave+2}</b><button onClick={()=>setOctave(v=>Math.min(6,v+1))}>+</button></div><div className="studio-keyboard"><div className="studio-white-keys">{pianoNotes.map((n,i)=><button key={n} onPointerDown={()=>void play(n)} className={held.includes(n)?"pressed":""} aria-label={"Play "+midiName(n)}><span>{midiName(n)}</span></button>)}</div><div className="studio-black-keys">{black.map(({n,left})=><button key={n} style={{left}} onPointerDown={()=>void play(n)} aria-label={"Play "+midiName(n)}><span>{midiName(n)}</span></button>)}</div></div><p className="instrument-hint">The piano uses sampled grand-piano recordings. Tap any white or black key.</p></>}
       {instrument==="guitar"&&<><div className="guitar-neck"><div className="guitar-fret-labels"><span>STRING</span>{[0,1,2,3,4,5,6,7,8,9,10,11,12].map(n=><span key={n}>{n===0?"OPEN":n}</span>)}</div>{[{s:"E2",m:40},{s:"A2",m:45},{s:"D3",m:50},{s:"G3",m:55},{s:"B3",m:59},{s:"E4",m:64}].map(row=><div className="guitar-string" key={row.s}><b>{row.s}</b>{Array.from({length:13},(_,f)=><button key={f} onClick={()=>void play(row.m+f)} className={held.includes(row.m+f)?"pressed":""} aria-label={row.s+" fret "+f}><i/></button>)}</div>)}</div><p className="instrument-hint">Standard guitar tuning · 6 strings · 12 frets. Each fret raises the pitch by one semitone.</p></>}
       {instrument==="bass"&&<><div className="bass-board">{[40,45,50,55].map((base,i)=><div className="bass-string" key={base}><b>{["E1","A1","D2","G2"][i]}</b>{Array.from({length:13},(_,f)=><button key={f} onClick={()=>void play(base+f)}>{midiName(base+f)}</button>)}</div>)}</div><p className="instrument-hint">Four-string bass layout · Standard E–A–D–G tuning · Play roots and grooves.</p></>}
       {instrument==="strings"&&<div className="strings-practice"><div className="strings-visual"><Waves size={66}/></div><h3>Play a sustained string tone</h3><div className="note-pad">{Array.from({length:15},(_,i)=>48+i).map(n=><button key={n} onClick={()=>void play(n)}>{midiName(n)}</button>)}</div><p className="instrument-hint">Sustained envelope for bow-like phrasing. Try holding a note with longer decay.</p></div>}
