@@ -7,7 +7,7 @@ import { ArrowLeft, AudioLines, Gamepad2, Music2, Pause, Play, Search, Volume2 }
 import { useRouter } from "next/navigation";
 import { ITEMS, type Item } from "../page";
 
-type Player = { start:(o:{note:number|string;velocity?:number;duration?:number;time?:number})=>unknown; setCC?:(cc:number,value:number)=>void };
+type Player = { output?:{volume:number}; start:(o:{note:number|string;velocity?:number;duration?:number;time?:number})=>unknown; setCC?:(cc:number,value:number)=>void };
 const DRUMS=["kick","snare","closed-hi-hat","open-hi-hat","low-tom","mid-tom","high-tom","crash","ride","clap"];
 const DRUM_NOTES=[36,38,42,46,45,47,50,49,51,39];
 const CHALLENGE=[60,62,64,67,64,62,60,67];
