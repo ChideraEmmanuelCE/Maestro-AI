@@ -79,7 +79,7 @@ const FAMILIES:("All"|Family)[]=["All","Keyboard","Strings","Brass","Woodwinds",
 const NOTES=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
 const noteName=(n:number)=>NOTES[(n%12+12)%12]+(Math.floor(n/12)-1);
 const midiToName=(n:number)=>noteName(n);
-type Player={start:(o:{note:number|string;velocity?:number;duration?:number})=>()=>void;stop:(note?:number|string)=>void;dispose?:()=>void;output?:{volume:number};setCC?:(cc:number,value:number)=>void};
+type Player={start:(o:{note:number|string;velocity?:number;duration?:number;time?:number})=>()=>void;stop:(note?:number|string)=>void;dispose?:()=>void;output?:{volume:number};setCC?:(cc:number,value:number)=>void};
 export default function InstrumentsPage(){
  const router=useRouter();
  const [family,setFamily]=useState<"All"|Family>("All");
@@ -138,7 +138,7 @@ export default function InstrumentsPage(){
   setMessage("C major chord · "+current.name);
  }
  async function playScale(){
-  const p=await getPlayer(current);[0,2,4,5,7,9,11,12].forEach((v,i)=>p.start({note:60+v,velocity,duration:.35,time:undefined} as never));
+  const p=await getPlayer(current);const startAt=(contextRef.current?.currentTime||0)+0.12;[0,2,4,5,7,9,11,12].forEach((v,i)=>p.start({note:60+v,velocity,duration:.32,time:startAt+i*.38}));
   setMessage("C major scale · "+current.name);
  }
  function pedal(on:boolean){setSustain(on);const p=players.current[current.id];p?.setCC?.(64,on?127:0);}
