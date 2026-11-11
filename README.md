@@ -1,64 +1,35 @@
 # Maestro AI
 
-Maestro AI is being rebuilt as an age-adaptive music education studio: structured learning, audible examples, instrument practice, composition, and a private AI tutor.
+Maestro AI is an age-adaptive music-learning studio with structured lessons, audible examples, instrument practice, rhythm training, composition and an AI tutor.
 
-## Current implementation
+## Features
 
-- 20 structured lessons spanning listening, piano, notation, rhythm, scales, ear training, chords, harmony, guitar and composition.
-- Lesson objectives, concept explanations, listening prompts, practical activities and four-question mastery checks. Learners must score at least 75% before a lesson is marked mastered; best score and attempt count are persisted to Supabase when cloud auth is configured.
-- Three-octave sample-based piano playback using the Salamander soundfont, with a local synthesizer fallback.
-- Interactive guitar fretboard with playable open strings/frets and common chord voicings.
-- Five-pad synthesized drum kit, real-time microphone pitch detection and browser-based practice recording with playback/download of takes.
-- Prompt-driven four-bar procedural compositions plus a multitrack C-major arrangement with melody, harmony, bass and percussion.
-- Tempo control, track muting, arrangement playback and MIDI export.
-- Maestro AI function tools for playing concept examples, generating music, opening practice and controlling the metronome.
-- Supabase email magic links, guardian-managed multi-learner profiles, learner switching, cloud lesson mastery and cloud composition records (requires configured Supabase project).
-- Supabase email magic-link sign-in, session refresh middleware and auth callback (requires project environment variables).
-- Supabase SQL schema for guardian accounts, multiple learner profiles, lesson mastery, practice sessions, generated pieces and weekly goals.
-- Row-level security policies scope learner records to their guardian.
+- 20 structured lessons across listening, piano, notation, rhythm, scales, ear training, chords, harmony, guitar and composition.
+- Lesson objectives, explanations, listening prompts, practical activities and mastery checks.
+- Three-octave piano playback with sample-based audio and synthesizer fallback.
+- Interactive guitar fretboard, drum pads, microphone pitch detection and practice recording.
+- Procedural music composition, multitrack playback, tempo control, track muting and MIDI export.
+- AI tutor with music actions and practice guidance.
+- Local accounts with username, email and password. Passwords use PBKDF2-SHA-256 hashes with unique salts; no email verification or email service is used.
+- Learning progress, goals, chat history and saved compositions persist in the current browser.
 
 ## Technology
 
-- Next.js 15 App Router, React 19 and TypeScript
-- Tone.js + Web Audio API
-- Salamander piano samples (loaded from Tone.js public sample hosting)
-- `@tonejs/midi` for MIDI export
-- Supabase Auth, Postgres and Storage (schema and dependencies included; project credentials and live auth wiring remain required)
-- Vercel deployment
+Next.js 15, React 19, TypeScript, Tone.js, Web Audio API and `@tonejs/midi`.
 
 ## Setup
 
-1. Install dependencies:
+1. Install dependencies with `npm install`.
+2. Copy `.env.example` to `.env.local` and add an AI provider key if you want the AI tutor enabled.
+3. Run `npm run dev`.
 
-   ```bash
-   npm install
-   ```
+## Account and data model
 
-2. Copy `.env.example` to `.env.local` and fill in the Supabase and AI provider values.
-
-3. In the Supabase SQL editor, run:
-
-   `supabase/migrations/001_initial_schema.sql`
-
-4. Start the app:
-
-   ```bash
-   npm run dev
-   ```
+Authentication is intentionally local-only. Accounts and learning data are stored in the browser's local storage, so they remain on that browser/device and do not synchronize across devices. Clearing browser storage removes the local account and progress. Passwords are never stored as plaintext. Do not use this local account mode for sensitive or regulated data.
 
 ## Environment variables
 
-- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase publishable/anon key
-- `GROQ_API_KEY`: optional server-side AI tutor provider key
-- `HF_TOKEN`: optional Hugging Face fallback
+- `GROQ_API_KEY`: optional server-side AI tutor provider key.
+- `HF_TOKEN`: optional Hugging Face fallback.
 
-Never expose service-role keys or model-provider secrets in browser code.
-
-## Important release status
-
-This repository is in active rebuild. The Supabase schema is prepared but has not been applied to a live Supabase project. Cloud sign-in, profile switching, lesson-mastery sync and composition records are wired, but they cannot work until the Supabase URL/key are configured in Vercel and the migration is applied. Full practice-session analytics, microphone performance scoring, external generative-model audio and MP3/WAV export are not yet shipped. The microphone tuner analyses pitch locally. Optional practice recordings remain in browser memory and can be played back or downloaded; they are not uploaded to Supabase. Automated pitch-accuracy scoring, timing-deviation analysis, cloud practice-session history, high-quality generated MP3 output and external generative-model integration are not yet shipped. Do not represent those capabilities as live.
-
-## Audio notes
-
-The piano sampler fetches Salamander samples on first use. If the sample host is unavailable, the audio engine falls back to a local Tone.js synthesizer. The current procedural arrangement can be played immediately after the first user gesture and exported as MIDI.
+Never expose model-provider secrets in browser code.
