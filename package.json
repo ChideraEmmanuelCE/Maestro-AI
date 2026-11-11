@@ -8,8 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.49.1",
     "@tonejs/midi": "^2.0.28",
     "lucide-react": "^0.468.0",
     "next": "15.5.29",
